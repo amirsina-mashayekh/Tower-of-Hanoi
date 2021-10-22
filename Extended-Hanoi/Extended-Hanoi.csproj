@@ -63,7 +63,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="HanoiUtil\ExHanoi.cs" />
+    <Compile Include="HanoiUtil\Hanoi.cs" />
     <Compile Include="HanoiUtil\Move.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

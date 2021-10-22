@@ -26,7 +26,11 @@ namespace Extended_Hanoi.HanoiUtil
         /// </exception>
         public static void SolveHanoi(Peg src, Peg aux, Peg dst, int count, List<Move> moves)
         {
-            if (count < 1) { throw new ArgumentOutOfRangeException("count", "count should be at least 1."); }
+            if (count < 1)
+            {
+                throw new ArgumentOutOfRangeException("count", "count should be at least 1.");
+            }
+
             if (count == 1)
             {
                 moves.Add(new Move(src, dst));
@@ -52,7 +56,11 @@ namespace Extended_Hanoi.HanoiUtil
         /// </exception>
         public static void SolveExHanoi(Peg src, Peg aux, Peg dst, int count, List<Move> moves)
         {
-            if (count < 1) { throw new ArgumentOutOfRangeException("count", "count should be at least 1"); }
+            if (count < 1)
+            {
+                throw new ArgumentOutOfRangeException("count", "count should be at least 1.");
+            }
+
             if (count == 1)
             {
                 moves.Add(new Move(dst, aux));

@@ -81,8 +81,8 @@ namespace Extended_Hanoi.HanoiUtil.Tests
             Assert.IsTrue(Enumerable.SequenceEqual(test1, moves));
 
             moves.Clear();
-            _ = Assert.ThrowsException<ArgumentOutOfRangeException>(() => SolveHanoi(Peg.P1, Peg.P2, Peg.P3, 0, moves));
-            _ = Assert.ThrowsException<ArgumentOutOfRangeException>(() => SolveHanoi(Peg.P1, Peg.P2, Peg.P3, -1, moves));
+            _ = Assert.ThrowsException<ArgumentOutOfRangeException>(() => SolveExHanoi(Peg.P1, Peg.P2, Peg.P3, 0, moves));
+            _ = Assert.ThrowsException<ArgumentOutOfRangeException>(() => SolveExHanoi(Peg.P1, Peg.P2, Peg.P3, -1, moves));
         }
     }
 }
