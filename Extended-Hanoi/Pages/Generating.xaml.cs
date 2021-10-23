@@ -1,17 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Extended_Hanoi.HanoiUtil;
 
 namespace Extended_Hanoi.Pages
@@ -55,7 +45,9 @@ namespace Extended_Hanoi.Pages
                 return;
             }
 
-            _ = NavigationService.Navigate(new System.Uri("/Pages/Tower.xaml", UriKind.Relative));
+            Tower.Moves = moves;
+
+            _ = NavigationService.Navigate(new Uri("/Pages/Tower.xaml", UriKind.Relative));
         }
 
         private void CancelGeneratingButton_Click(object sender, RoutedEventArgs e)

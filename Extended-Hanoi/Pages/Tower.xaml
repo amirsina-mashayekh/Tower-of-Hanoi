@@ -4,29 +4,28 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d"
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="475" d:DesignWidth="800"
       Title="Tower">
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition />
-            <RowDefinition Height="110" />
+            <RowDefinition MinHeight="300"/>
+            <RowDefinition Height="125" />
         </Grid.RowDefinitions>
 
         <Button x:Name="BackToStartPageButton" HorizontalAlignment="Left" Margin="5" Padding="7,3" Click="BackToStartPageButton_Click">
             Back
         </Button>
 
-        <Grid x:Name="TowerGrid" Grid.Row="1" Grid.RowSpan="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-        </Grid>
+        <Canvas x:Name="TowerCanvas" Grid.Row="1" Width="750" Height="300">
+            <Border x:Name="Peg1" Width="20" Height="260" Canvas.Left="145" Canvas.Bottom="0" Background="#966F33" CornerRadius="5"/>
+            <Border x:Name="Peg2" Width="20" Height="260" Canvas.Left="365" Canvas.Bottom="0" Background="#966F33" CornerRadius="5"/>
+            <Border x:Name="Peg3" Width="20" Height="260" Canvas.Left="585" Canvas.Bottom="0" Background="#966F33" CornerRadius="5"/>
+            <Border x:Name="Floor" Width="660" Height="25" Canvas.Left="45" Canvas.Bottom="0" Background="#966F33" CornerRadius="5" BorderBrush="Brown" BorderThickness="0,1,0,0"/>
+        </Canvas>
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" Margin="100,10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
