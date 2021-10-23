@@ -1,0 +1,45 @@
+﻿<Page x:Class="Extended_Hanoi.Start"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="Start">
+    <Page.Style>
+        <Style TargetType="Page">
+            <Setter Property="FontFamily" Value="Segoe UI" />
+        </Style>
+    </Page.Style>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1.5*"/>
+        </Grid.RowDefinitions>
+        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Bottom" FontSize="72" Grid.Row="0">
+            Tower of Hanoi
+        </TextBlock>
+
+        <RadioButton x:Name="StandardRadio" GroupName="HanoiType" Grid.Row="1" HorizontalAlignment="Center"
+                     VerticalContentAlignment="Center"  FontSize="18" Content="Standard" IsChecked="True" />
+        <RadioButton x:Name="ExtendedRadio" GroupName="HanoiType" Grid.Row="2" HorizontalAlignment="Center"
+                     VerticalContentAlignment="Center" FontSize="18" Content="Extended" />
+
+        <TextBlock HorizontalAlignment="Center" FontSize="22" Grid.Row="3" Margin="0,15,0,5">
+            Height of Tower:
+        </TextBlock>
+
+        <TextBox x:Name="DisksCountTextBox" HorizontalAlignment="Center" TextAlignment="Center"
+                 Grid.Row="4" Width="50" MaxLength="2" FontSize="16" />
+
+        <Button x:Name="GenerateButton" Grid.Row="5" HorizontalAlignment="Center" VerticalAlignment="Top"
+                Margin="0,15,0,0" Padding="10" FontSize="18" Click="GenerateButton_Click">
+            Generate
+        </Button>
+    </Grid>
+</Page>
