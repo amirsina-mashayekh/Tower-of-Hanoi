@@ -68,5 +68,17 @@ namespace Extended_Hanoi.HanoiUtil
         {
             return !(left == right);
         }
+
+        /// <summary>
+        /// Reverses a move.
+        /// </summary>
+        /// <param name="move">the <c>Move</c> object to reverse.</param>
+        /// <returns>
+        /// A new <c>Move</c> which its <c>Destination</c> is <c>Source</c> of <c>move</c> and vice versa.
+        /// </returns>
+        public static Move Reverse(Move move)
+        {
+            return new Move(move.Destination, move.Source);
+        }
     }
 }

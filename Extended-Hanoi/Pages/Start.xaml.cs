@@ -2,6 +2,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Extended_Hanoi
 {
@@ -27,6 +28,14 @@ namespace Extended_Hanoi
             Generating.TowerHeight = height;
             Generating.TowerIsExtended = (bool)ExtendedRadio.IsChecked;
             _ = NavigationService.Navigate(new Uri("/Pages/Generating.xaml", UriKind.Relative));
+        }
+
+        private void DisksCountTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                GenerateButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, GenerateButton));
+            }
         }
     }
 }

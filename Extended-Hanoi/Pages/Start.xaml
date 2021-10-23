@@ -5,7 +5,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="Start">
+      Title="Start"
+      FocusManager.FocusedElement="{Binding ElementName=DisksCountTextBox}">
     <Page.Style>
         <Style TargetType="Page">
             <Setter Property="FontFamily" Value="Segoe UI" />
@@ -35,7 +36,7 @@
         </TextBlock>
 
         <TextBox x:Name="DisksCountTextBox" HorizontalAlignment="Center" TextAlignment="Center"
-                 Grid.Row="4" Width="50" MaxLength="2" FontSize="16" />
+                 Grid.Row="4" Width="50" MaxLength="2" FontSize="16" KeyDown="DisksCountTextBox_KeyDown"/>
 
         <Button x:Name="GenerateButton" Grid.Row="5" HorizontalAlignment="Center" VerticalAlignment="Top"
                 Margin="0,15,0,0" Padding="10" FontSize="18" Click="GenerateButton_Click">

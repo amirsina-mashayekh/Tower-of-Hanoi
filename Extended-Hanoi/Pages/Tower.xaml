@@ -45,21 +45,21 @@
                 Speed
             </TextBlock>
             <Slider x:Name="SpeedSlider" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="5"
-                    Minimum="1" Maximum="100" SmallChange="1" LargeChange="10" Value="50" />
+                    Minimum="0" Maximum="99" SmallChange="1" LargeChange="10" Value="50" />
 
-            <Button x:Name="FirstMoveButton" Grid.Row="2" Grid.Column="0">
+            <Button x:Name="FirstMoveButton" Grid.Row="2" Grid.Column="0" Click="FirstMoveButton_Click">
                 &#x23EE;
             </Button>
-            <Button x:Name="PrevMoveButton" Grid.Row="2" Grid.Column="1">
+            <Button x:Name="PrevMoveButton" Grid.Row="2" Grid.Column="1" Click="PrevMoveButton_Click">
                 &#x23EA;
             </Button>
-            <Button x:Name="PlayPauseButton" Grid.Row="2" Grid.Column="2">
+            <Button x:Name="PlayPauseButton" Grid.Row="2" Grid.Column="2" Click="PlayPauseButton_Click">
                 &#x23F5;
             </Button>
             <Button x:Name="NextMoveButton" Grid.Row="2" Grid.Column="3" Click="NextMoveButton_Click">
                 &#x23E9;
             </Button>
-            <Button x:Name="LastMoveButton" Grid.Row="2" Grid.Column="4">
+            <Button x:Name="LastMoveButton" Grid.Row="2" Grid.Column="4" Click="LastMoveButton_Click">
                 &#x23ED;
             </Button>
         </Grid>

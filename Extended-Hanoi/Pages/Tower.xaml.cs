@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -46,7 +48,38 @@ namespace Extended_Hanoi.Pages
 
         public static List<Move> Moves { get; set; }
 
-        private int movesCursor = 0;
+        private readonly int movesCount;
+
+        private int _movesCursor;
+
+        private int MovesCursor
+        {
+            get => _movesCursor;
+            set
+            {
+                _movesCursor = value;
+                if (value == 0)
+                {
+                    FirstMoveButton.IsEnabled = false;
+                    PrevMoveButton.IsEnabled = false;
+                }
+                else if (value == 1)
+                {
+                    FirstMoveButton.IsEnabled = true;
+                    PrevMoveButton.IsEnabled = true;
+                }
+                else if (value == movesCount)
+                {
+                    LastMoveButton.IsEnabled = false;
+                    NextMoveButton.IsEnabled = false;
+                }
+                else if (value == movesCount - 1)
+                {
+                    LastMoveButton.IsEnabled = true;
+                    NextMoveButton.IsEnabled = true;
+                }
+            }
+        }
 
         private readonly List<Border> p1Disks = new List<Border>();
 
@@ -64,6 +97,7 @@ namespace Extended_Hanoi.Pages
             {
                 p1Disks, p2Disks, p3Disks
             });
+            movesCount = Moves.Count;
         }
 
         private void Tower_Loaded(object sender, RoutedEventArgs e)
@@ -78,6 +112,8 @@ namespace Extended_Hanoi.Pages
             disksCanvasLeft[2] = disksCanvasLeft[1] + MaxDiskWidth;
             DisksMinButton = Canvas.GetBottom(Floor) + Floor.Height;
             DisksMoveButton = Canvas.GetBottom(Peg1) + Peg1.Height + 15;
+
+            MovesCursor = 0;
 
             double MinDiskWidth = Peg1.Width * 3;
             double MaxTotalDisksHeight = Peg1.Height - Floor.Height - 15;
@@ -112,7 +148,7 @@ namespace Extended_Hanoi.Pages
                         CornerRadius = new CornerRadius(DisksHeight / 16),
                         Background = new SolidColorBrush(Color.FromArgb(127, 0, 0, 255)),
                         BorderBrush = new SolidColorBrush(Color.FromArgb(190, 0, 0, 255)),
-                        BorderThickness = new Thickness(0, 1, 0, 0)
+                        BorderThickness = new Thickness(0, 0.8, 0, 0)
                     }
                 };
                 pegs[i % 3 * ex].Add(disk);
@@ -136,12 +172,56 @@ namespace Extended_Hanoi.Pages
             NavigationService.GoBack();
         }
 
-        private void NextMoveButton_Click(object sender, RoutedEventArgs e)
+        private CancellationTokenSource playCTS = new CancellationTokenSource(1);
+
+        private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
-            PerformMove(Moves[movesCursor++]);
+            if (playCTS.IsCancellationRequested)
+            {
+                playCTS = new CancellationTokenSource();
+                _ = Play(playCTS.Token);
+                FirstMoveButton.IsEnabled = false;
+                PrevMoveButton.IsEnabled = false;
+                NextMoveButton.IsEnabled = false;
+                LastMoveButton.IsEnabled = false;
+            }
+            else
+            {
+                playCTS.Cancel();
+                FirstMoveButton.IsEnabled = true;
+                PrevMoveButton.IsEnabled = true;
+                NextMoveButton.IsEnabled = true;
+                LastMoveButton.IsEnabled = true;
+            }
         }
 
-        private void PerformMove(Move move)
+        private async void NextMoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            await PerformMove(Moves[MovesCursor++]);
+        }
+
+        private async void PrevMoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            await PerformMove(Move.Reverse(Moves[--MovesCursor]));
+        }
+
+        private async void LastMoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            while (MovesCursor < movesCount)
+            {
+                await PerformMove(Moves[MovesCursor++], false);
+            }
+        }
+
+        private async void FirstMoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            while (MovesCursor > 0)
+            {
+                await PerformMove(Move.Reverse(Moves[--MovesCursor]), false);
+            }
+        }
+
+        private async Task PerformMove(Move move, bool animate = true)
         {
             int srcNum = (int)move.Source;
             List<Border> src = pegs[srcNum];
@@ -158,6 +238,26 @@ namespace Extended_Hanoi.Pages
             // TODO: Animation
             Canvas.SetBottom(disk, DisksMinButton + ((dst.Count - 1) * DisksHeight));
             Canvas.SetLeft(disk, disksCanvasLeft[dstNum]);
+            if (animate)
+            {
+                await Task.Delay(1000 * (100 - (int)SpeedSlider.Value) / 100);
+            }
+        }
+
+        private async Task Play(CancellationToken cancellationToken)
+        {
+            PlayPauseButton.Content = "\u23F8";
+
+            while (MovesCursor < movesCount)
+            {
+                await PerformMove(Moves[MovesCursor++]);
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+            }
+
+            PlayPauseButton.Content = "\u23F5";
         }
     }
 }
