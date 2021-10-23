@@ -19,27 +19,27 @@ namespace Extended_Hanoi.HanoiUtil
         /// <param name="src">The source peg which is the initial place of disks.</param>
         /// <param name="aux">The auxilary peg.</param>
         /// <param name="dst">The destination peg which is the final place of disks.</param>
-        /// <param name="count">The count of disks on the source peg.</param>
+        /// <param name="count">The height of tower.</param>
         /// <param name="moves">The list to put results in it. Recommended to be empty.</param>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// When <c>count</c> is less than 1.
+        /// When <c>height</c> is less than 1.
         /// </exception>
-        public static void SolveHanoi(Peg src, Peg aux, Peg dst, int count, List<Move> moves)
+        public static void SolveHanoi(Peg src, Peg aux, Peg dst, int height, List<Move> moves)
         {
-            if (count < 1)
+            if (height < 1)
             {
-                throw new ArgumentOutOfRangeException("count", "count should be at least 1.");
+                throw new ArgumentOutOfRangeException("height", "height should be at least 1.");
             }
 
-            if (count == 1)
+            if (height == 1)
             {
                 moves.Add(new Move(src, dst));
             }
             else
             {
-                SolveHanoi(src, dst, aux, count - 1, moves);
+                SolveHanoi(src, dst, aux, height - 1, moves);
                 moves.Add(new Move(src, dst));
-                SolveHanoi(aux, src, dst, count - 1, moves);
+                SolveHanoi(aux, src, dst, height - 1, moves);
             }
         }
 
@@ -49,19 +49,19 @@ namespace Extended_Hanoi.HanoiUtil
         /// <param name="src">The source peg which is the initial place of disks.</param>
         /// <param name="aux">The auxilary peg.</param>
         /// <param name="dst">The destination peg which is the final place of disks.</param>
-        /// <param name="count">The count of disks on the source peg.</param>
+        /// <param name="count">The height tower.</param>
         /// <param name="moves">The list to put results in it. Recommended to be empty.</param>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// When <c>count</c> is less than 1.
+        /// When <c>height</c> is less than 1.
         /// </exception>
-        public static void SolveExHanoi(Peg src, Peg aux, Peg dst, int count, List<Move> moves)
+        public static void SolveExHanoi(Peg src, Peg aux, Peg dst, int height, List<Move> moves)
         {
-            if (count < 1)
+            if (height < 1)
             {
-                throw new ArgumentOutOfRangeException("count", "count should be at least 1.");
+                throw new ArgumentOutOfRangeException("height", "height should be at least 1.");
             }
 
-            if (count == 1)
+            if (height == 1)
             {
                 moves.Add(new Move(dst, aux));
                 moves.Add(new Move(src, dst));
@@ -71,10 +71,10 @@ namespace Extended_Hanoi.HanoiUtil
             }
             else
             {
-                SolveExHanoi(src, aux, dst, count - 1, moves);
-                SolveHanoi(dst, src, aux, (3 * count) - 2, moves);
+                SolveExHanoi(src, aux, dst, height - 1, moves);
+                SolveHanoi(dst, src, aux, (3 * height) - 2, moves);
                 moves.Add(new Move(src, dst));
-                SolveHanoi(aux, src, dst, (3 * count) - 1, moves);
+                SolveHanoi(aux, src, dst, (3 * height) - 1, moves);
             }
         }
     }
