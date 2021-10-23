@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Extended_Hanoi.HanoiUtil;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using Extended_Hanoi.HanoiUtil;
 
 namespace Extended_Hanoi.Pages
 {

@@ -1,18 +1,11 @@
 ﻿using Extended_Hanoi.HanoiUtil;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Extended_Hanoi.Pages
 {
@@ -37,19 +30,9 @@ namespace Extended_Hanoi.Pages
         private double DisksHeight;
 
         /// <summary>
-        /// <c>Canvas.Left</c> value for disks on Peg 1.
+        /// <c>Canvas.Left</c> value for disks on each peg.
         /// </summary>
-        private double p1DisksLeft;
-
-        /// <summary>
-        /// <c>Canvas.Left</c> value for disks on Peg 2.
-        /// </summary>
-        private double p2DisksLeft;
-
-        /// <summary>
-        /// <c>Canvas.Left</c> value for disks on Peg 3.
-        /// </summary>
-        private double p3DisksLeft;
+        private readonly double[] disksCanvasLeft = new double[3];
 
         /// <summary>
         /// Minimum <c>Canvas.Button</c> value for disks.
@@ -63,16 +46,24 @@ namespace Extended_Hanoi.Pages
 
         public static List<Move> Moves { get; set; }
 
+        private int movesCursor = 0;
+
         private readonly List<Border> p1Disks = new List<Border>();
 
         private readonly List<Border> p2Disks = new List<Border>();
 
         private readonly List<Border> p3Disks = new List<Border>();
 
+        private readonly ReadOnlyCollection<List<Border>> pegs;
+
         public Tower()
         {
             Loaded += Tower_Loaded;
             InitializeComponent();
+            pegs = new ReadOnlyCollection<List<Border>>(new List<List<Border>>()
+            {
+                p1Disks, p2Disks, p3Disks
+            });
         }
 
         private void Tower_Loaded(object sender, RoutedEventArgs e)
@@ -82,9 +73,9 @@ namespace Extended_Hanoi.Pages
 
             // Calculate needed fields
             MaxDiskWidth = Floor.Width / 3;
-            p1DisksLeft = Canvas.GetLeft(Floor);
-            p2DisksLeft = p1DisksLeft + MaxDiskWidth;
-            p3DisksLeft = p2DisksLeft + MaxDiskWidth;
+            disksCanvasLeft[0] = Canvas.GetLeft(Floor);
+            disksCanvasLeft[1] = disksCanvasLeft[0] + MaxDiskWidth;
+            disksCanvasLeft[2] = disksCanvasLeft[1] + MaxDiskWidth;
             DisksMinButton = Canvas.GetBottom(Floor) + Floor.Height;
             DisksMoveButton = Canvas.GetBottom(Peg1) + Peg1.Height + 15;
 
@@ -106,18 +97,8 @@ namespace Extended_Hanoi.Pages
 
             double disksWidthStep = (MaxDiskWidth - MinDiskWidth) / disksCount;
 
-            List<Border>[] pegs = new List<Border>[3];
-            if (Generating.TowerIsExtended)
-            {
-                pegs[0] = p1Disks;
-                pegs[1] = p2Disks;
-                pegs[2] = p3Disks;
-            }
-            else
-            {
-                pegs[0] = pegs[1] = pegs[2] = p1Disks;
-            }
-
+            // Add all disks to first peg if tower is standard.
+            int ex = Generating.TowerIsExtended ? 1 : 0;
             for (int i = 0; i < disksCount; i++)
             {
                 double padding = (i * disksWidthStep / 2) + 5;
@@ -134,38 +115,49 @@ namespace Extended_Hanoi.Pages
                         BorderThickness = new Thickness(0, 1, 0, 0)
                     }
                 };
-                pegs[i % 3].Add(disk);
+                pegs[i % 3 * ex].Add(disk);
                 _ = TowerCanvas.Children.Add(disk);
             }
 
-            int p1Count = p1Disks.Count;
-            for (int i = 0; i < p1Count; i++)
+            for (int i = 0; i < pegs.Count; i++)
             {
-                Border disk = p1Disks[i];
-                Canvas.SetBottom(disk, DisksMinButton + (i * DisksHeight));
-                Canvas.SetLeft(disk, p1DisksLeft);
-            }
-
-            int p2Count = p2Disks.Count;
-            for (int i = 0; i < p2Count; i++)
-            {
-                Border disk = p2Disks[i];
-                Canvas.SetBottom(disk, DisksMinButton + (i * DisksHeight));
-                Canvas.SetLeft(disk, p2DisksLeft);
-            }
-
-            int p3Count = p3Disks.Count;
-            for (int i = 0; i < p3Count; i++)
-            {
-                Border disk = p3Disks[i];
-                Canvas.SetBottom(disk, DisksMinButton + (i * DisksHeight));
-                Canvas.SetLeft(disk, p3DisksLeft);
+                int pDisksCount = pegs[i].Count;
+                for (int j = 0; j < pDisksCount; j++)
+                {
+                    Border disk = pegs[i][j];
+                    Canvas.SetBottom(disk, DisksMinButton + (j * DisksHeight));
+                    Canvas.SetLeft(disk, disksCanvasLeft[i]);
+                }
             }
         }
 
         private void BackToStartPageButton_Click(object sender, RoutedEventArgs e)
         {
             NavigationService.GoBack();
+        }
+
+        private void NextMoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            PerformMove(Moves[movesCursor++]);
+        }
+
+        private void PerformMove(Move move)
+        {
+            int srcNum = (int)move.Source;
+            List<Border> src = pegs[srcNum];
+            int dstNum = (int)move.Destination;
+            List<Border> dst = pegs[dstNum];
+
+            // Move logically
+            int srcLastIndex = src.Count - 1;
+            Border disk = src[srcLastIndex];
+            dst.Add(src[srcLastIndex]);
+            src.RemoveAt(srcLastIndex);
+
+            // Move visually
+            // TODO: Animation
+            Canvas.SetBottom(disk, DisksMinButton + ((dst.Count - 1) * DisksHeight));
+            Canvas.SetLeft(disk, disksCanvasLeft[dstNum]);
         }
     }
 }

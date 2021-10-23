@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Extended_Hanoi.Pages;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using Extended_Hanoi.Pages;
 
 namespace Extended_Hanoi
 {
