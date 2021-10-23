@@ -1,5 +1,5 @@
-﻿using System.Windows;
-using static Extended_Hanoi.HanoiUtil.Hanoi;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using Extended_Hanoi.Pages;
 
@@ -26,7 +26,7 @@ namespace Extended_Hanoi
 
             Generating.TowerHeight = height;
             Generating.TowerIsExtended = (bool)ExtendedRadio.IsChecked;
-            NavigationService.Navigate(new System.Uri("/Pages/Generating.xaml", System.UriKind.Relative));
+            _ = NavigationService.Navigate(new Uri("/Pages/Generating.xaml", UriKind.Relative));
         }
     }
 }

@@ -54,6 +54,8 @@ namespace Extended_Hanoi.Pages
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+
+            _ = NavigationService.Navigate(new System.Uri("/Pages/Tower.xaml", UriKind.Relative));
         }
 
         private void CancelGeneratingButton_Click(object sender, RoutedEventArgs e)
