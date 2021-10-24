@@ -44,10 +44,12 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" FontSize="18">
-                Speed
+                    <TextBlock>
+                        Speed: <Run Text="{Binding AnimationSpeed, Mode=OneWay}" />%
+                    </TextBlock>
                 </Label>
                 <Slider x:Name="SpeedSlider" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="5"
-                    Minimum="1" Maximum="100" SmallChange="1" LargeChange="10" Value="50" />
+                    Minimum="1" Maximum="100" SmallChange="1" LargeChange="10" Value="25" ValueChanged="SpeedSlider_ValueChanged" />
 
                 <Button x:Name="FirstMoveButton" Grid.Row="2" Grid.Column="0" Click="FirstMoveButton_Click">
                     &#x23EE;

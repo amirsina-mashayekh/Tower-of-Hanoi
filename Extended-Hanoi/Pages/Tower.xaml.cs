@@ -1,6 +1,8 @@
 ﻿using Extended_Hanoi.HanoiUtil;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,7 +17,7 @@ namespace Extended_Hanoi.Pages
     /// <summary>
     /// Interaction logic for Tower.xaml
     /// </summary>
-    public partial class Tower : Page
+    public partial class Tower : Page, INotifyPropertyChanged
     {
         /// <summary>
         /// Maximum width of disks.
@@ -116,7 +118,14 @@ namespace Extended_Hanoi.Pages
         /// </summary>
         private readonly List<Border>[] pegs = new List<Border>[3];
 
-        Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
+        private readonly Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        }
 
         public Tower()
         {
@@ -197,6 +206,25 @@ namespace Extended_Hanoi.Pages
         }
 
         private CancellationTokenSource playCTS = new CancellationTokenSource(1);
+
+        private int _animationSpeed;
+
+        public double AnimationSpeed
+        {
+            get => _animationSpeed;
+            set
+            {
+                _animationSpeed = (int)value;
+                OnPropertyChanged();
+            }
+        }
+
+        private void SpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            AnimationSpeed = SpeedSlider.Value;
+            animationTime = maxAnimationDuration -
+                    (Math.Log10(AnimationSpeed) * (maxAnimationDuration - minAnimationDuration) / 2);
+        }
 
         private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
@@ -307,7 +335,11 @@ namespace Extended_Hanoi.Pages
             }
         }
 
-        private const double maxAnimationDuration = 500;
+        private const double maxAnimationDuration = 1000;
+
+        private const double minAnimationDuration = 50;
+
+        private double animationTime;
 
         /// <summary>
         /// Performs move of a <c>Move</c> object.
@@ -331,18 +363,16 @@ namespace Extended_Hanoi.Pages
             if (visual)
             {
                 // Move visually
-                double time = maxAnimationDuration * ((101 - SpeedSlider.Value) / 100);
-
                 await AnimateAsync(Canvas.GetBottom(disk), DisksMoveButtom,
-                    (double btm) => Canvas.SetBottom(disk, btm), time);
+                    (double btm) => Canvas.SetBottom(disk, btm), animationTime);
                 await AnimateAsync(Canvas.GetLeft(disk), disksCanvasLeft[dstNum],
-                    (double left) => Canvas.SetLeft(disk, left), time);
+                    (double left) => Canvas.SetLeft(disk, left), animationTime);
                 await AnimateAsync(Canvas.GetBottom(disk), DisksMinButton + ((dst.Count - 1) * DisksHeight),
-                    (double btm) => Canvas.SetBottom(disk, btm), time);
+                    (double btm) => Canvas.SetBottom(disk, btm), animationTime);
             }
         }
 
-        private const double animationFPS = 60;
+        private const double animationFPS = 120;
 
         private const int millisecondsPerFrame = (int)(1000 / animationFPS);
 
