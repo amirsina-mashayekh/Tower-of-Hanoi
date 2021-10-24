@@ -190,8 +190,9 @@ namespace Extended_Hanoi.Pages
         private void BackToStartPageButton_Click(object sender, RoutedEventArgs e)
         {
             playCTS.Cancel();
-            Moves.Clear();
+            Moves = null;
             NavigationService.GoBack();
+            Content = null;
             GC.Collect();
         }
 

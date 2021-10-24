@@ -43,6 +43,9 @@ namespace Extended_Hanoi.Pages
                         await Hanoi.SolveHanoi(Hanoi.Peg.P1, Hanoi.Peg.P2, Hanoi.Peg.P3, TowerHeight, moves, cts.Token)
                         );
                 }
+
+                Tower.Moves = moves;
+                _ = NavigationService.Navigate(new Uri("/Pages/Tower.xaml", UriKind.Relative));
             }
             catch (Exception ex)
             {
@@ -56,15 +59,12 @@ namespace Extended_Hanoi.Pages
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
-                moves.Clear();
+                moves = null;
                 NavigationService.GoBack();
-                GC.Collect();
-                return;
             }
 
-            Tower.Moves = moves;
-
-            _ = NavigationService.Navigate(new Uri("/Pages/Tower.xaml", UriKind.Relative));
+            Content = null;
+            GC.Collect();
         }
 
         private void CancelGeneratingButton_Click(object sender, RoutedEventArgs e)
