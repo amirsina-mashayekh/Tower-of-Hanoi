@@ -99,12 +99,15 @@ namespace Extended_Hanoi.Pages
             }
         }
 
+        /// <summary>
+        /// Represents the remaining moves
+        /// </summary>
         public string RemainingMoves
         {
             get
             {
                 int rem = totalMoves - MovesCursor;
-                StringBuilder str = new StringBuilder(rem > 0 ? rem.ToString() : "No");
+                StringBuilder str = new StringBuilder(rem > 0 ? rem.ToString("#,0") : "No");
                 _ = str.Append(" Move");
                 if (rem != 1) { _ = str.Append('s'); }
                 return str.ToString();
@@ -131,11 +134,6 @@ namespace Extended_Hanoi.Pages
         /// Array of pegs.
         /// </summary>
         private readonly List<Border>[] pegs = new List<Border>[3];
-
-        /// <summary>
-        /// Gives access to UI elements to other threads
-        /// </summary>
-        private readonly Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -443,7 +441,7 @@ namespace Extended_Hanoi.Pages
                     while (val < end)
                     {
                         val += step;
-                        dispatcher.Invoke(() => method.Invoke(val));
+                        Dispatcher.Invoke(() => method.Invoke(val));
                         Thread.Sleep(millisecondsPerFrame);
                     }
                 }
@@ -452,7 +450,7 @@ namespace Extended_Hanoi.Pages
                     while (val > end)
                     {
                         val += step;
-                        dispatcher.Invoke(() => method.Invoke(val));
+                        Dispatcher.Invoke(() => method.Invoke(val));
                         Thread.Sleep(millisecondsPerFrame);
                     }
                 }

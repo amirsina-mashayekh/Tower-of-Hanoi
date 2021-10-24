@@ -17,6 +17,8 @@ namespace Extended_Hanoi.Pages
 
         public static bool TowerIsExtended { get; set; }
 
+        private static List<Move> moves;
+
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
         public Generating()
@@ -27,10 +29,17 @@ namespace Extended_Hanoi.Pages
 
         private async void Generating_Loaded(object sender, RoutedEventArgs e)
         {
-            List<Move> moves = new List<Move>();
+            moves = new List<Move>();
+
+            System.Timers.Timer movesUpdateTimer = new System.Timers.Timer(100)
+            {
+                AutoReset = true
+            };
+            movesUpdateTimer.Elapsed += MovesUpdateTimer_Elapsed;
 
             try
             {
+                movesUpdateTimer.Start();
                 if (TowerIsExtended)
                 {
                     await Task.Run(async () =>
@@ -49,6 +58,7 @@ namespace Extended_Hanoi.Pages
             }
             catch (Exception ex)
             {
+                movesUpdateTimer.Stop();
                 string msg = ex is OutOfMemoryException || ex is StackOverflowException
                     ? "Can't generate solution for this tower!\nPlease try a lower height."
                     : "Something went wrong!";
@@ -59,12 +69,25 @@ namespace Extended_Hanoi.Pages
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
-                moves = null;
                 NavigationService.GoBack();
             }
 
+            movesUpdateTimer.Stop();
+            moves = null;
             Content = null;
             GC.Collect();
+        }
+
+        private void MovesUpdateTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            try
+            {
+                _ = Dispatcher.Invoke(() => MovesTextBlock.Text = moves.Count.ToString("#,0") + " Moves");
+            }
+            catch (NullReferenceException)
+            {
+                // Sometimes occures if operation is finished or canceled while counting
+            }
         }
 
         private void CancelGeneratingButton_Click(object sender, RoutedEventArgs e)

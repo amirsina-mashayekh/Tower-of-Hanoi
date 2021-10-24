@@ -17,6 +17,7 @@
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="1.5*" />
         </Grid.RowDefinitions>
@@ -28,9 +29,13 @@
             Generating Solution...
         </TextBlock>
 
-        <ProgressBar HorizontalAlignment="Center" Grid.Row="2" Width="200" Height="15" IsIndeterminate="True" Margin="5" />
+        <TextBlock x:Name="MovesTextBlock" HorizontalAlignment="Center" Grid.Row="2" FontSize="18">
+            0 Moves
+        </TextBlock>
 
-        <Button x:Name="CancelGeneratingButton" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Top"
+        <ProgressBar HorizontalAlignment="Center" Grid.Row="3" Width="200" Height="15" IsIndeterminate="True" Margin="5" />
+
+        <Button x:Name="CancelGeneratingButton" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Top"
                 Margin="0,15,0,0" Padding="10" FontSize="18" Click="CancelGeneratingButton_Click">
             Cancel
         </Button>
