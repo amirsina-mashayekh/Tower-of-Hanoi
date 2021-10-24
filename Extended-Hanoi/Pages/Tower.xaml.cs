@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -98,6 +99,19 @@ namespace Extended_Hanoi.Pages
             }
         }
 
+        public string RemainingMoves
+        {
+            get
+            {
+                int rem = totalMoves - MovesCursor;
+                StringBuilder str = new StringBuilder(rem > 0 ? rem.ToString() : "No");
+                _ = str.Append(" Move");
+                if (rem != 1) { _ = str.Append('s'); }
+                return str.ToString();
+            }
+            set => OnPropertyChanged();
+        }
+
         /// <summary>
         /// Disks on peg 1.
         /// </summary>
@@ -118,6 +132,9 @@ namespace Extended_Hanoi.Pages
         /// </summary>
         private readonly List<Border>[] pegs = new List<Border>[3];
 
+        /// <summary>
+        /// Gives access to UI elements to other threads
+        /// </summary>
         private readonly Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -194,6 +211,7 @@ namespace Extended_Hanoi.Pages
             }
 
             RedrawTower();
+            RemainingMoves = "";         // To update properties binded to it
         }
 
         private void BackToStartPageButton_Click(object sender, RoutedEventArgs e)
@@ -205,10 +223,16 @@ namespace Extended_Hanoi.Pages
             GC.Collect();
         }
 
+        /// <summary>
+        /// Cancellation Token Source for play/pause
+        /// </summary>
         private CancellationTokenSource playCTS = new CancellationTokenSource(1);
 
         private int _animationSpeed;
 
+        /// <summary>
+        /// Animation speed (percent)
+        /// </summary>
         public double AnimationSpeed
         {
             get => _animationSpeed;
@@ -335,10 +359,19 @@ namespace Extended_Hanoi.Pages
             }
         }
 
+        /// <summary>
+        /// Maximum duration for an animation in milliseconds
+        /// </summary>
         private const double maxAnimationDuration = 1000;
 
+        /// <summary>
+        /// Minimum duration for an animation in milliseconds
+        /// </summary>
         private const double minAnimationDuration = 50;
 
+        /// <summary>
+        /// Current duration of animations
+        /// </summary>
         private double animationTime;
 
         /// <summary>
@@ -370,12 +403,28 @@ namespace Extended_Hanoi.Pages
                 await AnimateAsync(Canvas.GetBottom(disk), DisksMinButton + ((dst.Count - 1) * DisksHeight),
                     (double btm) => Canvas.SetBottom(disk, btm), animationTime);
             }
+
+            RemainingMoves = "";         // To update properties binded to it
         }
 
+        /// <summary>
+        /// Count of Frames (updates) Per Second for animation
+        /// </summary>
         private const double animationFPS = 120;
 
+        /// <summary>
+        /// Represents how much a frame of animation takes to complete (in milliseconds).
+        /// </summary>
         private const int millisecondsPerFrame = (int)(1000 / animationFPS);
 
+        /// <summary>
+        /// Performs a method animatedly.
+        /// </summary>
+        /// <param name="start">The initial value.</param>
+        /// <param name="end">The final value.</param>
+        /// <param name="method">The method to perform.</param>
+        /// <param name="time">The time animation should take in milliseconds.</param>
+        /// <returns>A <c>Task</c> object.</returns>
         private async Task AnimateAsync(double start, double end, Action<double> method, double time)
         {
             if (time <= 0)
