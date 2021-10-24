@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using static Extended_Hanoi.HanoiUtil.Hanoi;
 
 namespace Extended_Hanoi.HanoiUtil.Tests
@@ -9,8 +11,10 @@ namespace Extended_Hanoi.HanoiUtil.Tests
     [TestClass()]
     public class HanoiTests
     {
+        private static CancellationToken ctn = CancellationToken.None;
+
         [TestMethod()]
-        public void SolveHanoiTest()
+        public async Task SolveHanoiTest()
         {
             List<Move> moves = new List<Move>();
 
@@ -18,7 +22,7 @@ namespace Extended_Hanoi.HanoiUtil.Tests
             {
                 new Move(Peg.P1, Peg.P3)
             };
-            SolveHanoi(Peg.P1, Peg.P2, Peg.P3, 1, moves);
+            await SolveHanoi(Peg.P1, Peg.P2, Peg.P3, 1, moves, ctn);
             Assert.IsTrue(Enumerable.SequenceEqual(test1, moves));
 
             moves.Clear();
@@ -28,7 +32,7 @@ namespace Extended_Hanoi.HanoiUtil.Tests
                 new Move(Peg.P1, Peg.P3),
                 new Move(Peg.P2, Peg.P3)
             };
-            SolveHanoi(Peg.P1, Peg.P2, Peg.P3, 2, moves);
+            await SolveHanoi(Peg.P1, Peg.P2, Peg.P3, 2, moves, ctn);
             Assert.IsTrue(Enumerable.SequenceEqual(test2, moves));
 
             moves.Clear();
@@ -42,7 +46,7 @@ namespace Extended_Hanoi.HanoiUtil.Tests
                 new Move(Peg.P2, Peg.P3),
                 new Move(Peg.P1, Peg.P3)
             };
-            SolveHanoi(Peg.P1, Peg.P2, Peg.P3, 3, moves);
+            await SolveHanoi(Peg.P1, Peg.P2, Peg.P3, 3, moves, ctn);
             Assert.IsTrue(Enumerable.SequenceEqual(test3, moves));
 
             moves.Clear();
@@ -56,16 +60,19 @@ namespace Extended_Hanoi.HanoiUtil.Tests
                 new Move(Peg.P3, Peg.P1),
                 new Move(Peg.P2, Peg.P1)
             };
-            SolveHanoi(Peg.P2, Peg.P3, Peg.P1, 3, moves);
+            await SolveHanoi(Peg.P2, Peg.P3, Peg.P1, 3, moves, ctn);
             Assert.IsTrue(Enumerable.SequenceEqual(test3_1, moves));
 
             moves.Clear();
-            _ = Assert.ThrowsException<ArgumentOutOfRangeException>(() => SolveHanoi(Peg.P1, Peg.P2, Peg.P3, 0, moves));
-            _ = Assert.ThrowsException<ArgumentOutOfRangeException>(() => SolveHanoi(Peg.P1, Peg.P2, Peg.P3, -1, moves));
+            _ = Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() => SolveHanoi(Peg.P1, Peg.P2, Peg.P3, 0, moves, ctn));
+            _ = Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() => SolveHanoi(Peg.P1, Peg.P2, Peg.P3, -1, moves, ctn));
+
+            CancellationTokenSource cts = new CancellationTokenSource(10);
+            _ = Assert.ThrowsExceptionAsync<OperationCanceledException>(() => SolveHanoi(Peg.P1, Peg.P2, Peg.P3, 100, moves, cts.Token));
         }
 
         [TestMethod()]
-        public void SolveExHanoiTest()
+        public async Task SolveExHanoiTest()
         {
             List<Move> moves = new List<Move>();
 
@@ -77,12 +84,15 @@ namespace Extended_Hanoi.HanoiUtil.Tests
                 new Move(Peg.P2, Peg.P3),
                 new Move(Peg.P1, Peg.P3)
             };
-            SolveExHanoi(Peg.P1, Peg.P2, Peg.P3, 1, moves);
+            await SolveExHanoi(Peg.P1, Peg.P2, Peg.P3, 1, moves, ctn);
             Assert.IsTrue(Enumerable.SequenceEqual(test1, moves));
 
             moves.Clear();
-            _ = Assert.ThrowsException<ArgumentOutOfRangeException>(() => SolveExHanoi(Peg.P1, Peg.P2, Peg.P3, 0, moves));
-            _ = Assert.ThrowsException<ArgumentOutOfRangeException>(() => SolveExHanoi(Peg.P1, Peg.P2, Peg.P3, -1, moves));
+            _ = Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() => SolveExHanoi(Peg.P1, Peg.P2, Peg.P3, 0, moves, ctn));
+            _ = Assert.ThrowsExceptionAsync<ArgumentOutOfRangeException>(() => SolveExHanoi(Peg.P1, Peg.P2, Peg.P3, -1, moves, ctn));
+
+            CancellationTokenSource cts = new CancellationTokenSource(10);
+            _ = Assert.ThrowsExceptionAsync<OperationCanceledException>(() => SolveExHanoi(Peg.P1, Peg.P2, Peg.P3, 100, moves, cts.Token));
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Extended_Hanoi.HanoiUtil;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -15,33 +17,48 @@ namespace Extended_Hanoi.Pages
 
         public static bool TowerIsExtended { get; set; }
 
+        private readonly CancellationTokenSource cts = new CancellationTokenSource();
+
         public Generating()
         {
             InitializeComponent();
-
             Loaded += Generating_Loaded;
         }
 
-        private void Generating_Loaded(object sender, RoutedEventArgs e)
+        private async void Generating_Loaded(object sender, RoutedEventArgs e)
         {
             List<Move> moves = new List<Move>();
 
-            // TODO: async
             try
             {
                 if (TowerIsExtended)
                 {
-                    Hanoi.SolveExHanoi(Hanoi.Peg.P1, Hanoi.Peg.P2, Hanoi.Peg.P3, TowerHeight, moves);
+                    await Task.Run(async () =>
+                        await Hanoi.SolveExHanoi(Hanoi.Peg.P1, Hanoi.Peg.P2, Hanoi.Peg.P3, TowerHeight, moves, cts.Token)
+                        );
                 }
                 else
                 {
-                    Hanoi.SolveHanoi(Hanoi.Peg.P1, Hanoi.Peg.P2, Hanoi.Peg.P3, TowerHeight, moves);
+                    await Task.Run(async () =>
+                        await Hanoi.SolveHanoi(Hanoi.Peg.P1, Hanoi.Peg.P2, Hanoi.Peg.P3, TowerHeight, moves, cts.Token)
+                        );
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                _ = MessageBox.Show(Window.GetWindow(this), "Something went wrong!", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                string msg = ex is OutOfMemoryException || ex is StackOverflowException
+                    ? "Can't generate solution for this tower!\nPlease try a lower height."
+                    : "Something went wrong!";
+
+                if (!(ex is OperationCanceledException))
+                {
+                    _ = MessageBox.Show(Window.GetWindow(this), msg, "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+
+                moves.Clear();
+                NavigationService.GoBack();
+                GC.Collect();
                 return;
             }
 
@@ -52,7 +69,7 @@ namespace Extended_Hanoi.Pages
 
         private void CancelGeneratingButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.GoBack();
+            cts.Cancel();
         }
     }
 }

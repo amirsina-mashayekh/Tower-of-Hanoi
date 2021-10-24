@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Extended_Hanoi.HanoiUtil
 {
@@ -24,8 +26,11 @@ namespace Extended_Hanoi.HanoiUtil
         /// <exception cref="ArgumentOutOfRangeException">
         /// When <c>height</c> is less than 1.
         /// </exception>
-        public static void SolveHanoi(Peg src, Peg aux, Peg dst, int height, List<Move> moves)
+        /// <exception cref="OperationCanceledException"></exception>
+        public static async Task SolveHanoi(Peg src, Peg aux, Peg dst, int height, List<Move> moves, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (height < 1)
             {
                 throw new ArgumentOutOfRangeException("height", "height should be at least 1.");
@@ -37,9 +42,9 @@ namespace Extended_Hanoi.HanoiUtil
             }
             else
             {
-                SolveHanoi(src, dst, aux, height - 1, moves);
+                await SolveHanoi(src, dst, aux, height - 1, moves, cancellationToken);
                 moves.Add(new Move(src, dst));
-                SolveHanoi(aux, src, dst, height - 1, moves);
+                await SolveHanoi(aux, src, dst, height - 1, moves, cancellationToken);
             }
         }
 
@@ -54,8 +59,11 @@ namespace Extended_Hanoi.HanoiUtil
         /// <exception cref="ArgumentOutOfRangeException">
         /// When <c>height</c> is less than 1.
         /// </exception>
-        public static void SolveExHanoi(Peg src, Peg aux, Peg dst, int height, List<Move> moves)
+        /// <exception cref="OperationCanceledException"></exception>
+        public static async Task SolveExHanoi(Peg src, Peg aux, Peg dst, int height, List<Move> moves, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (height < 1)
             {
                 throw new ArgumentOutOfRangeException("height", "height should be at least 1.");
@@ -71,10 +79,10 @@ namespace Extended_Hanoi.HanoiUtil
             }
             else
             {
-                SolveExHanoi(src, aux, dst, height - 1, moves);
-                SolveHanoi(dst, src, aux, (3 * height) - 2, moves);
+                await SolveExHanoi(src, aux, dst, height - 1, moves, cancellationToken);
+                await SolveHanoi(dst, src, aux, (3 * height) - 2, moves, cancellationToken);
                 moves.Add(new Move(src, dst));
-                SolveHanoi(aux, src, dst, (3 * height) - 1, moves);
+                await SolveHanoi(aux, src, dst, (3 * height) - 1, moves, cancellationToken);
             }
         }
     }
