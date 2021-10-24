@@ -27,41 +27,44 @@
             <Border x:Name="Floor" Width="660" Height="25" Canvas.Left="45" Canvas.Bottom="0" Background="#966F33" CornerRadius="5" BorderBrush="Brown" BorderThickness="0,1,0,0" />
         </Canvas>
 
-        <Grid Grid.Row="2" Margin="100,10">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+        <!--Outer grid is for cursor, inner grid is to enable and disable controls.-->
+        <Grid x:Name="ControlsGridGrid" Grid.Row="2" Margin="100,10">
+            <Grid x:Name="ControlsGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" FontSize="18">
+                <Label Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" FontSize="18">
                 Speed
-            </TextBlock>
-            <Slider x:Name="SpeedSlider" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="5"
+                </Label>
+                <Slider x:Name="SpeedSlider" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="5"
                     Minimum="0" Maximum="99" SmallChange="1" LargeChange="10" Value="50" />
 
-            <Button x:Name="FirstMoveButton" Grid.Row="2" Grid.Column="0" Click="FirstMoveButton_Click">
-                &#x23EE;
-            </Button>
-            <Button x:Name="PrevMoveButton" Grid.Row="2" Grid.Column="1" Click="PrevMoveButton_Click">
-                &#x23EA;
-            </Button>
-            <Button x:Name="PlayPauseButton" Grid.Row="2" Grid.Column="2" Click="PlayPauseButton_Click">
-                &#x23F5;
-            </Button>
-            <Button x:Name="NextMoveButton" Grid.Row="2" Grid.Column="3" Click="NextMoveButton_Click">
-                &#x23E9;
-            </Button>
-            <Button x:Name="LastMoveButton" Grid.Row="2" Grid.Column="4" Click="LastMoveButton_Click">
-                &#x23ED;
-            </Button>
+                <Button x:Name="FirstMoveButton" Grid.Row="2" Grid.Column="0" Click="FirstMoveButton_Click">
+                    &#x23EE;
+                </Button>
+                <Button x:Name="PrevMoveButton" Grid.Row="2" Grid.Column="1" Click="PrevMoveButton_Click">
+                    &#x23EA;
+                </Button>
+                <Button x:Name="PlayPauseButton" Grid.Row="2" Grid.Column="2" Click="PlayPauseButton_Click">
+                    &#x23F5;
+                </Button>
+                <Button x:Name="NextMoveButton" Grid.Row="2" Grid.Column="3" Click="NextMoveButton_Click">
+                    &#x23E9;
+                </Button>
+                <Button x:Name="LastMoveButton" Grid.Row="2" Grid.Column="4" Click="LastMoveButton_Click">
+                    &#x23ED;
+                </Button>
+            </Grid>
         </Grid>
     </Grid>
 </Page>

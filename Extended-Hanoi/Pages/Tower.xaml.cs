@@ -1,11 +1,11 @@
 ﻿using Extended_Hanoi.HanoiUtil;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
 
@@ -46,58 +46,87 @@ namespace Extended_Hanoi.Pages
         /// </summary>
         private double DisksMoveButton;
 
+        /// <summary>
+        /// A list which contains disk moves.
+        /// </summary>
         public static List<Move> Moves { get; set; }
 
-        private readonly int movesCount;
+        /// <summary>
+        /// Total moves count.
+        /// </summary>
+        private readonly int totalMoves;
 
         private int _movesCursor;
 
+        /// <summary>
+        /// A cursor which points to current move.
+        /// </summary>
         private int MovesCursor
         {
             get => _movesCursor;
             set
             {
                 _movesCursor = value;
+
+                // If play is running, buttons status shouldn't be changed
+                if (!playCTS.IsCancellationRequested) { return; }
+
                 if (value == 0)
                 {
                     FirstMoveButton.IsEnabled = false;
                     PrevMoveButton.IsEnabled = false;
+                    PlayPauseButton.IsEnabled = true;
+                    LastMoveButton.IsEnabled = true;
+                    NextMoveButton.IsEnabled = true;
                 }
-                else if (value == 1)
-                {
-                    FirstMoveButton.IsEnabled = true;
-                    PrevMoveButton.IsEnabled = true;
-                }
-                else if (value == movesCount)
+                else if (value == totalMoves)
                 {
                     LastMoveButton.IsEnabled = false;
                     NextMoveButton.IsEnabled = false;
+                    PlayPauseButton.IsEnabled = false;
+                    FirstMoveButton.IsEnabled = true;
+                    PrevMoveButton.IsEnabled = true;
                 }
-                else if (value == movesCount - 1)
+                else
                 {
+                    FirstMoveButton.IsEnabled = true;
+                    PrevMoveButton.IsEnabled = true;
+                    PlayPauseButton.IsEnabled = true;
                     LastMoveButton.IsEnabled = true;
                     NextMoveButton.IsEnabled = true;
                 }
             }
         }
 
+        /// <summary>
+        /// Disks on peg 1.
+        /// </summary>
         private readonly List<Border> p1Disks = new List<Border>();
 
+        /// <summary>
+        /// Disks on peg 2.
+        /// </summary>
         private readonly List<Border> p2Disks = new List<Border>();
 
+        /// <summary>
+        /// Disks on peg 3.
+        /// </summary>
         private readonly List<Border> p3Disks = new List<Border>();
 
-        private readonly ReadOnlyCollection<List<Border>> pegs;
+        /// <summary>
+        /// Array of pegs.
+        /// </summary>
+        private readonly List<Border>[] pegs = new List<Border>[3];
 
         public Tower()
         {
             Loaded += Tower_Loaded;
             InitializeComponent();
-            pegs = new ReadOnlyCollection<List<Border>>(new List<List<Border>>()
+            pegs = new List<Border>[]
             {
                 p1Disks, p2Disks, p3Disks
-            });
-            movesCount = Moves.Count;
+            };
+            totalMoves = Moves.Count;
         }
 
         private void Tower_Loaded(object sender, RoutedEventArgs e)
@@ -117,6 +146,12 @@ namespace Extended_Hanoi.Pages
 
             double MinDiskWidth = Peg1.Width * 3;
             double MaxTotalDisksHeight = Peg1.Height - Floor.Height - 15;
+            if (Generating.TowerIsExtended)
+            {
+                // In extended mode, all disks may go to a single peg.
+                // So we divide MaxTotalDisksHeight so that all disks will fit in this situation
+                MaxTotalDisksHeight /= 3;
+            }
 
             int height = Generating.TowerHeight;
 
@@ -124,12 +159,6 @@ namespace Extended_Hanoi.Pages
             if (Generating.TowerIsExtended) { disksCount *= 3; }
 
             DisksHeight = Math.Min(MaxDiskHeight, MaxTotalDisksHeight / height);
-            if (Generating.TowerIsExtended)
-            {
-                // In extended mode, all disks may go to a single peg.
-                // So we divide DisksHeight so that all disks will fit in this situation
-                DisksHeight /= 3;
-            }
 
             double disksWidthStep = (MaxDiskWidth - MinDiskWidth) / disksCount;
 
@@ -155,20 +184,12 @@ namespace Extended_Hanoi.Pages
                 _ = TowerCanvas.Children.Add(disk);
             }
 
-            for (int i = 0; i < pegs.Count; i++)
-            {
-                int pDisksCount = pegs[i].Count;
-                for (int j = 0; j < pDisksCount; j++)
-                {
-                    Border disk = pegs[i][j];
-                    Canvas.SetBottom(disk, DisksMinButton + (j * DisksHeight));
-                    Canvas.SetLeft(disk, disksCanvasLeft[i]);
-                }
-            }
+            RedrawTower();
         }
 
         private void BackToStartPageButton_Click(object sender, RoutedEventArgs e)
         {
+            playCTS.Cancel();
             NavigationService.GoBack();
         }
 
@@ -179,7 +200,7 @@ namespace Extended_Hanoi.Pages
             if (playCTS.IsCancellationRequested)
             {
                 playCTS = new CancellationTokenSource();
-                _ = Play(playCTS.Token);
+                _ = PlayAsync(playCTS.Token);
                 FirstMoveButton.IsEnabled = false;
                 PrevMoveButton.IsEnabled = false;
                 NextMoveButton.IsEnabled = false;
@@ -197,31 +218,74 @@ namespace Extended_Hanoi.Pages
 
         private async void NextMoveButton_Click(object sender, RoutedEventArgs e)
         {
-            await PerformMove(Moves[MovesCursor++]);
+            ControlsGrid.IsEnabled = false;
+            await PerformMoveAsync(Moves[MovesCursor]);
+            ControlsGrid.IsEnabled = true;
+            MovesCursor++;
         }
 
         private async void PrevMoveButton_Click(object sender, RoutedEventArgs e)
         {
-            await PerformMove(Move.Reverse(Moves[--MovesCursor]));
+            MovesCursor--;
+            ControlsGrid.IsEnabled = false;
+            await PerformMoveAsync(Move.Reverse(Moves[MovesCursor]));
+            ControlsGrid.IsEnabled = true;
+            MovesCursor = MovesCursor;  // To update buttons status
         }
 
         private async void LastMoveButton_Click(object sender, RoutedEventArgs e)
         {
-            while (MovesCursor < movesCount)
+            ControlsGrid.IsEnabled = false;
+            ControlsGridGrid.Cursor = Cursors.Wait;
+
+            await Task.Run(async () =>
             {
-                await PerformMove(Moves[MovesCursor++], false);
-            }
+                while (MovesCursor < totalMoves)
+                {
+                    /* Used cursor as field instead of property to:
+                     * -Prevent unnecessary buttons update
+                     * -Be able to access cursor from new thread
+                     */
+                    await PerformMoveAsync(Moves[_movesCursor++], false);
+                }
+            });
+
+            MovesCursor = MovesCursor;  // To update buttons status
+            ControlsGridGrid.Cursor = Cursors.Arrow;
+            ControlsGrid.IsEnabled = true;
+            RedrawTower();
         }
 
         private async void FirstMoveButton_Click(object sender, RoutedEventArgs e)
         {
-            while (MovesCursor > 0)
+            ControlsGrid.IsEnabled = false;
+            ControlsGridGrid.Cursor = Cursors.Wait;
+
+            await Task.Run(async () =>
             {
-                await PerformMove(Move.Reverse(Moves[--MovesCursor]), false);
-            }
+                while (MovesCursor > 0)
+                {
+                    /* Used cursor as field instead of property to:
+                     * -Prevent unnecessary buttons update
+                     * -Be able to access cursor from new thread
+                     */
+                    await PerformMoveAsync(Move.Reverse(Moves[--_movesCursor]), false);
+                }
+            });
+
+            MovesCursor = MovesCursor;  // To update buttons status
+            ControlsGridGrid.Cursor = Cursors.Arrow;
+            ControlsGrid.IsEnabled = true;
+            RedrawTower();
         }
 
-        private async Task PerformMove(Move move, bool animate = true)
+        /// <summary>
+        /// Performs a move using a <c>Move</c> object.
+        /// </summary>
+        /// <param name="move">A <c>Move</c> object.</param>
+        /// <param name="visual">Determines should the move be visual.</param>
+        /// <returns>A <c>Task</c> object.</returns>
+        private async Task PerformMoveAsync(Move move, bool visual = true)
         {
             int srcNum = (int)move.Source;
             List<Border> src = pegs[srcNum];
@@ -234,30 +298,55 @@ namespace Extended_Hanoi.Pages
             dst.Add(src[srcLastIndex]);
             src.RemoveAt(srcLastIndex);
 
-            // Move visually
-            // TODO: Animation
-            Canvas.SetBottom(disk, DisksMinButton + ((dst.Count - 1) * DisksHeight));
-            Canvas.SetLeft(disk, disksCanvasLeft[dstNum]);
-            if (animate)
+            if (visual)
             {
+                // Move visually
+                // TODO: Animation
+                Canvas.SetBottom(disk, DisksMinButton + ((dst.Count - 1) * DisksHeight));
+                Canvas.SetLeft(disk, disksCanvasLeft[dstNum]);
                 await Task.Delay(1000 * (100 - (int)SpeedSlider.Value) / 100);
             }
         }
 
-        private async Task Play(CancellationToken cancellationToken)
+        /// <summary>
+        /// Performs moves in <c>Moves</c> list until it is stopped or reached the end.
+        /// </summary>
+        /// <param name="cancellationToken">a <c>CancellationToken</c> to stop the task when needed.</param>
+        /// <returns>A <c>Task</c> object.</returns>
+        private async Task PlayAsync(CancellationToken cancellationToken)
         {
             PlayPauseButton.Content = "\u23F8";
 
-            while (MovesCursor < movesCount)
+            while (MovesCursor < totalMoves)
             {
-                await PerformMove(Moves[MovesCursor++]);
+                await PerformMoveAsync(Moves[MovesCursor++]);
                 if (cancellationToken.IsCancellationRequested)
                 {
                     break;
                 }
             }
 
+            if (!playCTS.IsCancellationRequested) { playCTS.Cancel(); }
+            PrevMoveButton.IsEnabled = true;
+            FirstMoveButton.IsEnabled = true;
             PlayPauseButton.Content = "\u23F5";
+        }
+
+        /// <summary>
+        /// Sets place of all disks based on <c>pegs</c> array.
+        /// </summary>
+        private void RedrawTower()
+        {
+            for (int i = 0; i < pegs.Length; i++)
+            {
+                int pDisksCount = pegs[i].Count;
+                for (int j = 0; j < pDisksCount; j++)
+                {
+                    Border disk = pegs[i][j];
+                    Canvas.SetBottom(disk, DisksMinButton + (j * DisksHeight));
+                    Canvas.SetLeft(disk, disksCanvasLeft[i]);
+                }
+            }
         }
     }
 }
