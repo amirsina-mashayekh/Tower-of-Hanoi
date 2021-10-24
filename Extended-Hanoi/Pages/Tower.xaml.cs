@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 
 namespace Extended_Hanoi.Pages
 {
@@ -42,9 +43,9 @@ namespace Extended_Hanoi.Pages
         private double DisksMinButton;
 
         /// <summary>
-        /// <c>Canvas.Button</c> value for disks while moving between pegs.
+        /// <c>Canvas.Buttom</c> value for disks while moving between pegs.
         /// </summary>
-        private double DisksMoveButton;
+        private double DisksMoveButtom;
 
         /// <summary>
         /// A list which contains disk moves.
@@ -67,9 +68,6 @@ namespace Extended_Hanoi.Pages
             set
             {
                 _movesCursor = value;
-
-                // If play is running, buttons status shouldn't be changed
-                if (!playCTS.IsCancellationRequested) { return; }
 
                 if (value == 0)
                 {
@@ -118,6 +116,8 @@ namespace Extended_Hanoi.Pages
         /// </summary>
         private readonly List<Border>[] pegs = new List<Border>[3];
 
+        Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
+
         public Tower()
         {
             Loaded += Tower_Loaded;
@@ -140,7 +140,7 @@ namespace Extended_Hanoi.Pages
             disksCanvasLeft[1] = disksCanvasLeft[0] + MaxDiskWidth;
             disksCanvasLeft[2] = disksCanvasLeft[1] + MaxDiskWidth;
             DisksMinButton = Canvas.GetBottom(Floor) + Floor.Height;
-            DisksMoveButton = Canvas.GetBottom(Peg1) + Peg1.Height + 15;
+            DisksMoveButtom = Canvas.GetBottom(Peg1) + Peg1.Height + 15;
 
             MovesCursor = 0;
 
@@ -198,24 +198,35 @@ namespace Extended_Hanoi.Pages
 
         private CancellationTokenSource playCTS = new CancellationTokenSource(1);
 
-        private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
+        private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
+            PlayPauseButton.Content = "\u23F8";
+
+            // If CancellationToken is true, it means play isn't running
             if (playCTS.IsCancellationRequested)
             {
-                playCTS = new CancellationTokenSource();
-                _ = PlayAsync(playCTS.Token);
                 FirstMoveButton.IsEnabled = false;
                 PrevMoveButton.IsEnabled = false;
                 NextMoveButton.IsEnabled = false;
                 LastMoveButton.IsEnabled = false;
+
+                playCTS = new CancellationTokenSource();
+                Task result = PlayAsync(playCTS.Token);
+                try
+                {
+                    await result;
+                }
+                catch (OperationCanceledException) { }
+
+                playCTS.Cancel();                       // To indicate play isn't running
+                PlayPauseButton.Content = "\u23F5";
+                MovesCursor = MovesCursor;              // Update buttons
+                ControlsGrid.IsEnabled = true;
             }
             else
             {
                 playCTS.Cancel();
-                FirstMoveButton.IsEnabled = true;
-                PrevMoveButton.IsEnabled = true;
-                NextMoveButton.IsEnabled = true;
-                LastMoveButton.IsEnabled = true;
+                ControlsGrid.IsEnabled = false;
             }
         }
 
@@ -283,7 +294,23 @@ namespace Extended_Hanoi.Pages
         }
 
         /// <summary>
-        /// Performs a move using a <c>Move</c> object.
+        /// Performs moves in <c>Moves</c> list until it is stopped or reached the end.
+        /// </summary>
+        /// <param name="cancellationToken">a <c>CancellationToken</c> to stop the task when needed.</param>
+        /// <returns>A <c>Task</c> object.</returns>
+        private async Task PlayAsync(CancellationToken cancellationToken)
+        {
+            while (_movesCursor < totalMoves)
+            {
+                await PerformMoveAsync(Moves[_movesCursor++]);
+                cancellationToken.ThrowIfCancellationRequested();
+            }
+        }
+
+        private const double maxAnimationDuration = 500;
+
+        /// <summary>
+        /// Performs move of a <c>Move</c> object.
         /// </summary>
         /// <param name="move">A <c>Move</c> object.</param>
         /// <param name="visual">Determines should the move be visual.</param>
@@ -304,35 +331,55 @@ namespace Extended_Hanoi.Pages
             if (visual)
             {
                 // Move visually
-                // TODO: Animation
-                Canvas.SetBottom(disk, DisksMinButton + ((dst.Count - 1) * DisksHeight));
-                Canvas.SetLeft(disk, disksCanvasLeft[dstNum]);
-                await Task.Delay(1000 * (100 - (int)SpeedSlider.Value) / 100);
+                double time = maxAnimationDuration * ((101 - SpeedSlider.Value) / 100);
+
+                await AnimateAsync(Canvas.GetBottom(disk), DisksMoveButtom,
+                    (double btm) => Canvas.SetBottom(disk, btm), time);
+                await AnimateAsync(Canvas.GetLeft(disk), disksCanvasLeft[dstNum],
+                    (double left) => Canvas.SetLeft(disk, left), time);
+                await AnimateAsync(Canvas.GetBottom(disk), DisksMinButton + ((dst.Count - 1) * DisksHeight),
+                    (double btm) => Canvas.SetBottom(disk, btm), time);
             }
         }
 
-        /// <summary>
-        /// Performs moves in <c>Moves</c> list until it is stopped or reached the end.
-        /// </summary>
-        /// <param name="cancellationToken">a <c>CancellationToken</c> to stop the task when needed.</param>
-        /// <returns>A <c>Task</c> object.</returns>
-        private async Task PlayAsync(CancellationToken cancellationToken)
-        {
-            PlayPauseButton.Content = "\u23F8";
+        private const double animationFPS = 60;
 
-            while (MovesCursor < totalMoves)
+        private const int millisecondsPerFrame = (int)(1000 / animationFPS);
+
+        private async Task AnimateAsync(double start, double end, Action<double> method, double time)
+        {
+            if (time <= 0)
             {
-                await PerformMoveAsync(Moves[MovesCursor++]);
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    break;
-                }
+                throw new ArgumentOutOfRangeException();
             }
 
-            if (!playCTS.IsCancellationRequested) { playCTS.Cancel(); }
-            PrevMoveButton.IsEnabled = true;
-            FirstMoveButton.IsEnabled = true;
-            PlayPauseButton.Content = "\u23F5";
+            if (start == end) { return; }
+
+            double step = (end - start) / time * millisecondsPerFrame;
+            double val = start + step;
+            await Task.Run(() =>
+            {
+                if (end > start)
+                {
+                    while (val < end)
+                    {
+                        val += step;
+                        dispatcher.Invoke(() => method.Invoke(val));
+                        Thread.Sleep(millisecondsPerFrame);
+                    }
+                }
+                else
+                {
+                    while (val > end)
+                    {
+                        val += step;
+                        dispatcher.Invoke(() => method.Invoke(val));
+                        Thread.Sleep(millisecondsPerFrame);
+                    }
+                }
+            });
+
+            method.Invoke(end);
         }
 
         /// <summary>

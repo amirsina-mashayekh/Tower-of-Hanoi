@@ -47,7 +47,7 @@
                 Speed
                 </Label>
                 <Slider x:Name="SpeedSlider" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="5"
-                    Minimum="0" Maximum="99" SmallChange="1" LargeChange="10" Value="50" />
+                    Minimum="1" Maximum="100" SmallChange="1" LargeChange="10" Value="50" />
 
                 <Button x:Name="FirstMoveButton" Grid.Row="2" Grid.Column="0" Click="FirstMoveButton_Click">
                     &#x23EE;
