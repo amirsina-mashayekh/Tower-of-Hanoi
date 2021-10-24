@@ -7,7 +7,7 @@ namespace Extended_Hanoi.HanoiUtil
     /// <summary>
     /// Represents a disk movement in Tower of Hanoi.
     /// </summary>
-    public class Move : IEquatable<Move>
+    public struct Move : IEquatable<Move>
     {
         /// <summary>
         /// The initial place of disk.
@@ -39,36 +39,6 @@ namespace Extended_Hanoi.HanoiUtil
             return Source + " -> " + Destination;
         }
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as Move);
-        }
-
-        public bool Equals(Move other)
-        {
-            return other != null &&
-                   Source == other.Source &&
-                   Destination == other.Destination;
-        }
-
-        public override int GetHashCode()
-        {
-            int hashCode = 1937123878;
-            hashCode = (hashCode * -1521134295) + Source.GetHashCode();
-            hashCode = (hashCode * -1521134295) + Destination.GetHashCode();
-            return hashCode;
-        }
-
-        public static bool operator ==(Move left, Move right)
-        {
-            return EqualityComparer<Move>.Default.Equals(left, right);
-        }
-
-        public static bool operator !=(Move left, Move right)
-        {
-            return !(left == right);
-        }
-
         /// <summary>
         /// Reverses a move.
         /// </summary>
@@ -79,6 +49,35 @@ namespace Extended_Hanoi.HanoiUtil
         public static Move Reverse(Move move)
         {
             return new Move(move.Destination, move.Source);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Move move && Equals(move);
+        }
+
+        public bool Equals(Move other)
+        {
+            return Source == other.Source &&
+                   Destination == other.Destination;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 1918477335;
+            hashCode = hashCode * -1521134295 + Source.GetHashCode();
+            hashCode = hashCode * -1521134295 + Destination.GetHashCode();
+            return hashCode;
+        }
+
+        public static bool operator ==(Move left, Move right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Move left, Move right)
+        {
+            return !(left == right);
         }
     }
 }
