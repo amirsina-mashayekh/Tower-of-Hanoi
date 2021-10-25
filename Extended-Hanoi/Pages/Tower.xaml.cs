@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 
@@ -28,17 +29,7 @@ namespace Extended_Hanoi.Pages
         /// <summary>
         /// Minimum duration for an animation in milliseconds
         /// </summary>
-        private const double minAnimationDuration = 50;
-
-        /// <summary>
-        /// Count of Frames (updates) Per Second for animation
-        /// </summary>
-        private const double animationFPS = 120;
-
-        /// <summary>
-        /// Represents how much a frame of animation takes to complete (in milliseconds).
-        /// </summary>
-        private const int millisecondsPerFrame = (int)(1000 / animationFPS);
+        private const double minAnimationDuration = 75;
 
         /// <summary>
         /// Current duration of animations
@@ -66,14 +57,14 @@ namespace Extended_Hanoi.Pages
         private readonly double[] disksCanvasLeft = new double[3];
 
         /// <summary>
-        /// Minimum <c>Canvas.Button</c> value for disks.
+        /// Minimum <c>Canvas.Bottom</c> value for disks.
         /// </summary>
-        private double DisksMinButton;
+        private double DisksMinBottom;
 
         /// <summary>
-        /// <c>Canvas.Buttom</c> value for disks while moving between pegs.
+        /// <c>Canvas.Bottom</c> value for disks while moving between pegs.
         /// </summary>
-        private double DisksMoveButtom;
+        private double DisksMoveBottom;
 
         /// <summary>
         /// A list which contains disk moves.
@@ -208,8 +199,8 @@ namespace Extended_Hanoi.Pages
             disksCanvasLeft[0] = Canvas.GetLeft(Floor);
             disksCanvasLeft[1] = disksCanvasLeft[0] + MaxDiskWidth;
             disksCanvasLeft[2] = disksCanvasLeft[1] + MaxDiskWidth;
-            DisksMinButton = Canvas.GetBottom(Floor) + Floor.Height;
-            DisksMoveButtom = Canvas.GetBottom(Peg1) + Peg1.Height + 15;
+            DisksMinBottom = Canvas.GetBottom(Floor) + Floor.Height;
+            DisksMoveBottom = Canvas.GetBottom(Peg1) + Peg1.Height + 15;
 
             MovesCursor = 0;
 
@@ -406,12 +397,11 @@ namespace Extended_Hanoi.Pages
             if (visual)
             {
                 // Move visually
-                await AnimateAsync(Canvas.GetBottom(disk), DisksMoveButtom,
-                    (double btm) => Canvas.SetBottom(disk, btm), animationTime);
-                await AnimateAsync(Canvas.GetLeft(disk), disksCanvasLeft[dstNum],
-                    (double left) => Canvas.SetLeft(disk, left), animationTime);
-                await AnimateAsync(Canvas.GetBottom(disk), DisksMinButton + ((dst.Count - 1) * DisksHeight),
-                    (double btm) => Canvas.SetBottom(disk, btm), animationTime);
+                TimeSpan at = TimeSpan.FromMilliseconds(animationTime);
+
+                await AnimateAsync(DisksMoveBottom, disk, Canvas.BottomProperty, at);
+                await AnimateAsync(disksCanvasLeft[dstNum], disk, Canvas.LeftProperty, at);
+                await AnimateAsync(DisksMinBottom + ((dst.Count - 1) * DisksHeight), disk, Canvas.BottomProperty, at);
             }
 
             RemainingMoves = "";         // To update properties binded to it
@@ -425,33 +415,36 @@ namespace Extended_Hanoi.Pages
         /// <param name="method">The method to perform.</param>
         /// <param name="time">The time animation should take in milliseconds.</param>
         /// <returns>A <c>Task</c> object.</returns>
-        private async Task AnimateAsync(double start, double end, Action<double> method, double time)
+        private async Task AnimateAsync(double end, UIElement element, DependencyProperty property, TimeSpan time)
         {
-            if (time <= 0)
+            if (time.Ticks <= 0)
             {
                 throw new ArgumentOutOfRangeException();
             }
 
-            if (start == end) { return; }
+            TaskCompletionSource<bool> acs = new TaskCompletionSource<bool>();
 
-            double step = (end - start) / time * millisecondsPerFrame;
-            double val = start + step;
-
-            Func<bool> shouldContinue;
-            if (end > start) { shouldContinue = () => val < end; }
-            else { shouldContinue = () => val > end; }
-
-            await Task.Run(() =>
+            Storyboard storyboard = new Storyboard()
             {
-                while (shouldContinue())
-                {
-                    val += step;
-                    Dispatcher.Invoke(() => method(val));
-                    Thread.Sleep(millisecondsPerFrame);
-                }
-            });
+                FillBehavior = FillBehavior.Stop
+            };
 
-            method(end);
+            DoubleAnimationUsingKeyFrames animation = new DoubleAnimationUsingKeyFrames();
+            _ = animation.KeyFrames.Add(new EasingDoubleKeyFrame(end, KeyTime.FromTimeSpan(time), new SineEase()));
+            storyboard.Children.Add(animation);
+
+            Storyboard.SetTarget(storyboard, element);
+            Storyboard.SetTargetProperty(storyboard, new PropertyPath(property));
+            storyboard.Completed += (sender, e) =>
+            {
+                acs.SetResult(true);
+            };
+
+            storyboard.Begin();
+
+            _ = await acs.Task;
+
+            element.SetValue(property, end);
         }
 
         /// <summary>
@@ -465,7 +458,7 @@ namespace Extended_Hanoi.Pages
                 for (int j = 0; j < pDisksCount; j++)
                 {
                     Border disk = pegs[i][j];
-                    Canvas.SetBottom(disk, DisksMinButton + (j * DisksHeight));
+                    Canvas.SetBottom(disk, DisksMinBottom + (j * DisksHeight));
                     Canvas.SetLeft(disk, disksCanvasLeft[i]);
                 }
             }
