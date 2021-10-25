@@ -247,6 +247,7 @@ namespace Extended_Hanoi.Pages
             }
 
             RedrawTower();
+
             RemainingMoves = "";         // To update properties binded to it
         }
 
@@ -301,18 +302,17 @@ namespace Extended_Hanoi.Pages
         private async void NextMoveButton_Click(object sender, RoutedEventArgs e)
         {
             ControlsGrid.IsEnabled = false;
-            await PerformMoveAsync(Moves[MovesCursor]);
+            await PerformMoveAsync(Moves[MovesCursor++]);
             ControlsGrid.IsEnabled = true;
-            MovesCursor++;
+            RemainingMoves = "";         // To update properties binded to it
         }
 
         private async void PrevMoveButton_Click(object sender, RoutedEventArgs e)
         {
-            MovesCursor--;
             ControlsGrid.IsEnabled = false;
-            await PerformMoveAsync(Move.Reverse(Moves[MovesCursor]));
+            await PerformMoveAsync(Move.Reverse(Moves[--MovesCursor]));
             ControlsGrid.IsEnabled = true;
-            MovesCursor = MovesCursor;  // To update buttons status
+            RemainingMoves = "";         // To update properties binded to it
         }
 
         private async void LastMoveButton_Click(object sender, RoutedEventArgs e)
@@ -371,6 +371,7 @@ namespace Extended_Hanoi.Pages
             while (_movesCursor < totalMoves)
             {
                 await PerformMoveAsync(Moves[_movesCursor++]);
+                RemainingMoves = "";         // To update properties binded to it
                 cancellationToken.ThrowIfCancellationRequested();
             }
         }

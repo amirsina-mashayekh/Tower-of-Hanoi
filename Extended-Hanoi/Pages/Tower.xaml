@@ -17,21 +17,20 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto"/>
             <RowDefinition MinHeight="300" />
-            <RowDefinition Height="125" />
+            <RowDefinition Height="135" />
         </Grid.RowDefinitions>
 
         <Button x:Name="BackToStartPageButton" Style="{StaticResource ControlButtons}" FontSize="22" HorizontalAlignment="Left" Click="BackToStartPageButton_Click">
             &#x2B05;
         </Button>
 
-        <TextBlock Grid.Row="1" HorizontalAlignment="Center"  FontSize="18">
+        <TextBlock HorizontalAlignment="Center"  FontSize="18" VerticalAlignment="Bottom">
             <Run Text="{Binding RemainingMoves}" />
             Remaining
         </TextBlock>
-        
-        <Canvas x:Name="TowerCanvas" Grid.Row="2" Width="750" Height="325" Margin="25,8">
+
+        <Canvas x:Name="TowerCanvas" Grid.Row="1" Width="750" Height="325">
             <Border x:Name="Peg1" Width="20" Height="260" Canvas.Left="145" Canvas.Bottom="0" Background="#966F33" CornerRadius="5" />
             <Border x:Name="Peg2" Width="20" Height="260" Canvas.Left="365" Canvas.Bottom="0" Background="#966F33" CornerRadius="5" />
             <Border x:Name="Peg3" Width="20" Height="260" Canvas.Left="585" Canvas.Bottom="0" Background="#966F33" CornerRadius="5" />
@@ -39,7 +38,7 @@
         </Canvas>
 
         <!--Outer grid is for cursor, inner grid is to enable and disable controls.-->
-        <Grid x:Name="ControlsGridGrid" Grid.Row="3" Margin="100,10">
+        <Grid x:Name="ControlsGridGrid" Grid.Row="2" Margin="100,0">
             <Grid x:Name="ControlsGrid">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -54,7 +53,7 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Center" FontSize="18" Margin="0,5,0,0">
+                <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Center" FontSize="18">
                     <TextBlock>
                         &#x23F1;Speed: <Run Text="{Binding AnimationSpeed, Mode=OneWay}" />%
                     </TextBlock>

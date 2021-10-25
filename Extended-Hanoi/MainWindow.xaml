@@ -6,5 +6,5 @@
         mc:Ignorable="d"
         Title="Tower of Hanoi"
         SizeToContent="WidthAndHeight">
-    <Frame x:Name="MainFrame" Source="/Pages/Start.xaml" NavigationUIVisibility="Hidden" Height="500" Width="800" />
+    <Frame x:Name="MainFrame" Source="/Pages/Start.xaml" NavigationUIVisibility="Hidden" MinHeight="500" MinWidth="800" />
 </Window>
