@@ -36,7 +36,7 @@
         <ProgressBar HorizontalAlignment="Center" Grid.Row="3" Width="200" Height="15" IsIndeterminate="True" Margin="5" />
 
         <Button x:Name="CancelGeneratingButton" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Top"
-                Margin="0,15,0,0" Padding="10" FontSize="18" Click="CancelGeneratingButton_Click">
+                Margin="0,15,0,0" Padding="10" Click="CancelGeneratingButton_Click">
             Cancel
         </Button>
     </Grid>

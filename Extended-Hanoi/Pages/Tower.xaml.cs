@@ -21,6 +21,31 @@ namespace Extended_Hanoi.Pages
     public partial class Tower : Page, INotifyPropertyChanged
     {
         /// <summary>
+        /// Maximum duration for an animation in milliseconds
+        /// </summary>
+        private const double maxAnimationDuration = 1000;
+
+        /// <summary>
+        /// Minimum duration for an animation in milliseconds
+        /// </summary>
+        private const double minAnimationDuration = 50;
+
+        /// <summary>
+        /// Count of Frames (updates) Per Second for animation
+        /// </summary>
+        private const double animationFPS = 120;
+
+        /// <summary>
+        /// Represents how much a frame of animation takes to complete (in milliseconds).
+        /// </summary>
+        private const int millisecondsPerFrame = (int)(1000 / animationFPS);
+
+        /// <summary>
+        /// Current duration of animations
+        /// </summary>
+        private double animationTime;
+
+        /// <summary>
         /// Maximum width of disks.
         /// </summary>
         private double MaxDiskWidth;
@@ -135,6 +160,26 @@ namespace Extended_Hanoi.Pages
         /// </summary>
         private readonly List<Border>[] pegs = new List<Border>[3];
 
+        /// <summary>
+        /// Cancellation Token Source for play/pause
+        /// </summary>
+        private CancellationTokenSource playCTS = new CancellationTokenSource(1);
+
+        private int _animationSpeed;
+
+        /// <summary>
+        /// Animation speed (percent)
+        /// </summary>
+        public double AnimationSpeed
+        {
+            get => _animationSpeed;
+            set
+            {
+                _animationSpeed = (int)value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
@@ -196,12 +241,14 @@ namespace Extended_Hanoi.Pages
                     Width = MaxDiskWidth,
                     Height = DisksHeight,
                     Padding = new Thickness(padding, 0, padding, 0),
+                    SnapsToDevicePixels = true,
                     Child = new Border()
                     {
                         CornerRadius = new CornerRadius(DisksHeight / 16),
                         Background = new SolidColorBrush(Color.FromArgb(127, 0, 0, 255)),
                         BorderBrush = new SolidColorBrush(Color.FromArgb(190, 0, 0, 255)),
-                        BorderThickness = new Thickness(0, 0.8, 0, 0)
+                        BorderThickness = new Thickness(0, 0.8, 0, 0),
+                        SnapsToDevicePixels = true
                     }
                 };
                 pegs[i % 3 * ex].Add(disk);
@@ -219,26 +266,6 @@ namespace Extended_Hanoi.Pages
             NavigationService.GoBack();
             Content = null;
             GC.Collect();
-        }
-
-        /// <summary>
-        /// Cancellation Token Source for play/pause
-        /// </summary>
-        private CancellationTokenSource playCTS = new CancellationTokenSource(1);
-
-        private int _animationSpeed;
-
-        /// <summary>
-        /// Animation speed (percent)
-        /// </summary>
-        public double AnimationSpeed
-        {
-            get => _animationSpeed;
-            set
-            {
-                _animationSpeed = (int)value;
-                OnPropertyChanged();
-            }
         }
 
         private void SpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -269,7 +296,7 @@ namespace Extended_Hanoi.Pages
                 catch (OperationCanceledException) { }
 
                 playCTS.Cancel();                       // To indicate play isn't running
-                PlayPauseButton.Content = "\u23F5";
+                PlayPauseButton.Content = "\u25B6";
                 MovesCursor = MovesCursor;              // Update buttons
                 ControlsGrid.IsEnabled = true;
             }
@@ -358,21 +385,6 @@ namespace Extended_Hanoi.Pages
         }
 
         /// <summary>
-        /// Maximum duration for an animation in milliseconds
-        /// </summary>
-        private const double maxAnimationDuration = 1000;
-
-        /// <summary>
-        /// Minimum duration for an animation in milliseconds
-        /// </summary>
-        private const double minAnimationDuration = 50;
-
-        /// <summary>
-        /// Current duration of animations
-        /// </summary>
-        private double animationTime;
-
-        /// <summary>
         /// Performs move of a <c>Move</c> object.
         /// </summary>
         /// <param name="move">A <c>Move</c> object.</param>
@@ -406,16 +418,6 @@ namespace Extended_Hanoi.Pages
         }
 
         /// <summary>
-        /// Count of Frames (updates) Per Second for animation
-        /// </summary>
-        private const double animationFPS = 120;
-
-        /// <summary>
-        /// Represents how much a frame of animation takes to complete (in milliseconds).
-        /// </summary>
-        private const int millisecondsPerFrame = (int)(1000 / animationFPS);
-
-        /// <summary>
         /// Performs a method animatedly.
         /// </summary>
         /// <param name="start">The initial value.</param>
@@ -434,29 +436,22 @@ namespace Extended_Hanoi.Pages
 
             double step = (end - start) / time * millisecondsPerFrame;
             double val = start + step;
+
+            Func<bool> shouldContinue;
+            if (end > start) { shouldContinue = () => val < end; }
+            else { shouldContinue = () => val > end; }
+
             await Task.Run(() =>
             {
-                if (end > start)
+                while (shouldContinue())
                 {
-                    while (val < end)
-                    {
-                        val += step;
-                        Dispatcher.Invoke(() => method.Invoke(val));
-                        Thread.Sleep(millisecondsPerFrame);
-                    }
-                }
-                else
-                {
-                    while (val > end)
-                    {
-                        val += step;
-                        Dispatcher.Invoke(() => method.Invoke(val));
-                        Thread.Sleep(millisecondsPerFrame);
-                    }
+                    val += step;
+                    Dispatcher.Invoke(() => method(val));
+                    Thread.Sleep(millisecondsPerFrame);
                 }
             });
 
-            method.Invoke(end);
+            method(end);
         }
 
         /// <summary>

@@ -22,8 +22,8 @@
             <RowDefinition Height="125" />
         </Grid.RowDefinitions>
 
-        <Button x:Name="BackToStartPageButton" HorizontalAlignment="Left" Margin="5,5,0,5" Padding="7,3" Click="BackToStartPageButton_Click">
-            Back
+        <Button x:Name="BackToStartPageButton" Style="{StaticResource ControlButtons}" FontSize="22" HorizontalAlignment="Left" Click="BackToStartPageButton_Click">
+            &#x2B05;
         </Button>
 
         <TextBlock Grid.Row="1" HorizontalAlignment="Center"  FontSize="18">
@@ -54,27 +54,27 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
 
-                <Label Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" FontSize="18">
+                <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Center" FontSize="18">
                     <TextBlock>
-                        Speed: <Run Text="{Binding AnimationSpeed, Mode=OneWay}" />%
+                        &#x23F1;Speed: <Run Text="{Binding AnimationSpeed, Mode=OneWay}" />%
                     </TextBlock>
                 </Label>
                 <Slider x:Name="SpeedSlider" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="5"
                     Minimum="1" Maximum="100" SmallChange="1" LargeChange="10" Value="25" ValueChanged="SpeedSlider_ValueChanged" />
 
-                <Button x:Name="FirstMoveButton" Grid.Row="2" Grid.Column="0" Click="FirstMoveButton_Click">
+                <Button x:Name="FirstMoveButton" Grid.Row="2" Grid.Column="0" Click="FirstMoveButton_Click" Style="{StaticResource ControlButtons}">
                     &#x23EE;
                 </Button>
-                <Button x:Name="PrevMoveButton" Grid.Row="2" Grid.Column="1" Click="PrevMoveButton_Click">
+                <Button x:Name="PrevMoveButton" Grid.Row="2" Grid.Column="1" Click="PrevMoveButton_Click" Style="{StaticResource ControlButtons}">
                     &#x23EA;
                 </Button>
-                <Button x:Name="PlayPauseButton" Grid.Row="2" Grid.Column="2" Click="PlayPauseButton_Click">
-                    &#x23F5;
+                <Button x:Name="PlayPauseButton" Grid.Row="2" Grid.Column="2" Click="PlayPauseButton_Click" Style="{StaticResource ControlButtons}">
+                    &#x25B6;
                 </Button>
-                <Button x:Name="NextMoveButton" Grid.Row="2" Grid.Column="3" Click="NextMoveButton_Click">
+                <Button x:Name="NextMoveButton" Grid.Row="2" Grid.Column="3" Click="NextMoveButton_Click" Style="{StaticResource ControlButtons}">
                     &#x23E9;
                 </Button>
-                <Button x:Name="LastMoveButton" Grid.Row="2" Grid.Column="4" Click="LastMoveButton_Click">
+                <Button x:Name="LastMoveButton" Grid.Row="2" Grid.Column="4" Click="LastMoveButton_Click" Style="{StaticResource ControlButtons}">
                     &#x23ED;
                 </Button>
             </Grid>

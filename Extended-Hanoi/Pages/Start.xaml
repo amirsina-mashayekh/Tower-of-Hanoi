@@ -39,7 +39,7 @@
                  Grid.Row="4" Width="50" MaxLength="2" FontSize="16" KeyDown="DisksCountTextBox_KeyDown"/>
 
         <Button x:Name="GenerateButton" Grid.Row="5" HorizontalAlignment="Center" VerticalAlignment="Top"
-                Margin="0,15,0,0" Padding="10" FontSize="18" Click="GenerateButton_Click">
+                Margin="0,15,0,0" Padding="10" Click="GenerateButton_Click">
             Generate
         </Button>
     </Grid>
