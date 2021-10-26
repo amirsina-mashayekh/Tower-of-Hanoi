@@ -1,4 +1,4 @@
-﻿using Extended_Hanoi.HanoiUtil;
+﻿using Tower_of_Hanoi.HanoiUtil;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Extended_Hanoi.Pages
+namespace Tower_of_Hanoi.Pages
 {
     public partial class Tower
     {

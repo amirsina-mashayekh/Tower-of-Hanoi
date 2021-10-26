@@ -1,10 +1,10 @@
-﻿using Extended_Hanoi.Pages;
+﻿using Tower_of_Hanoi.Pages;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 
-namespace Extended_Hanoi
+namespace Tower_of_Hanoi
 {
     /// <summary>
     /// Interaction logic for Start.xaml

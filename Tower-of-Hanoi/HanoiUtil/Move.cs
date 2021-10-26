@@ -1,7 +1,7 @@
 ﻿using System;
-using static Extended_Hanoi.HanoiUtil.Hanoi;
+using static Tower_of_Hanoi.HanoiUtil.Hanoi;
 
-namespace Extended_Hanoi.HanoiUtil
+namespace Tower_of_Hanoi.HanoiUtil
 {
     /// <summary>
     /// Represents a disk movement in Tower of Hanoi.

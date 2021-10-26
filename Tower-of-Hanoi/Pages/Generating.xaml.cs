@@ -1,4 +1,4 @@
-﻿using Extended_Hanoi.HanoiUtil;
+﻿using Tower_of_Hanoi.HanoiUtil;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Extended_Hanoi.Pages
+namespace Tower_of_Hanoi.Pages
 {
     /// <summary>
     /// Interaction logic for Generating.xaml

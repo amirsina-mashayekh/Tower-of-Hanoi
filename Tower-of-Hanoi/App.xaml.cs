@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Extended_Hanoi
+namespace Tower_of_Hanoi
 {
     /// <summary>
     /// Interaction logic for App.xaml

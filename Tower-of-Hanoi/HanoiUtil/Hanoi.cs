@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Extended_Hanoi.HanoiUtil
+namespace Tower_of_Hanoi.HanoiUtil
 {
     /// <summary>
     /// Provides methods to solve Standard and Extended Tower of Hanoi.

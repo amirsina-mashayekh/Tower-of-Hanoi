@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static Extended_Hanoi.HanoiUtil.Hanoi;
+using static Tower_of_Hanoi.HanoiUtil.Hanoi;
 
-namespace Extended_Hanoi.HanoiUtil.Tests
+namespace Tower_of_Hanoi.HanoiUtil.Tests
 {
     [TestClass()]
     public class HanoiTests

@@ -1,4 +1,4 @@
-﻿using Extended_Hanoi.HanoiUtil;
+﻿using Tower_of_Hanoi.HanoiUtil;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 
-namespace Extended_Hanoi.Pages
+namespace Tower_of_Hanoi.Pages
 {
     /// <summary>
     /// Interaction logic for Tower.xaml

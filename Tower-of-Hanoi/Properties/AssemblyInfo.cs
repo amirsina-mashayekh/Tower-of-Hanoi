@@ -5,12 +5,12 @@ using System.Windows;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Extended-Hanoi")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Tower of Hanoi")]
+[assembly: AssemblyDescription("A GUI representation for Hanoi and Extended Hanoi algorithms")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Extended-Hanoi")]
-[assembly: AssemblyCopyright("Copyright ©  2021")]
+[assembly: AssemblyProduct("Tower of Hanoi")]
+[assembly: AssemblyCopyright("Copyright © 2021 AmirSina Mashayekh")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
