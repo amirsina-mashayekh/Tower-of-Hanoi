@@ -63,9 +63,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Extended-Hanoi\Extended-Hanoi.csproj">
+    <ProjectReference Include="..\Tower-of-Hanoi\Tower-of-Hanoi.csproj">
       <Project>{090B1FDE-4827-4AEA-AAC5-72C4CBFA473D}</Project>
-      <Name>Extended-Hanoi</Name>
+      <Name>Tower-of-Hanoi</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>
