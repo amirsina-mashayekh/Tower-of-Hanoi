@@ -59,10 +59,10 @@
                         &#x23F1;Speed: <Run Text="{Binding AnimationSpeed, Mode=OneWay}" />%
                     </TextBlock>
                 </Label>
-                <Slider x:Name="SpeedSlider" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
+                <Slider x:Name="SpeedSlider" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" ToolTip="Speed"
                     Minimum="1" Maximum="100" SmallChange="1" LargeChange="10" Value="25" ValueChanged="SpeedSlider_ValueChanged" />
 
-                <Button x:Name="FirstMoveButton" Grid.Row="2" Grid.Column="0" Click="FirstMoveButton_Click" Style="{StaticResource ControlButtons}">
+                <Button x:Name="FastReverseButton" Grid.Row="2" Grid.Column="0" Click="FastReverseButton_Click" Style="{StaticResource ControlButtons}">
                     &#x23EA;
                     <Button.ToolTip>Fast Reverse</Button.ToolTip>
                 </Button>
@@ -78,7 +78,7 @@
                     &#x27A1;
                     <Button.ToolTip>Next Move</Button.ToolTip>
                 </Button>
-                <Button x:Name="LastMoveButton" Grid.Row="2" Grid.Column="4" Click="LastMoveButton_Click" Style="{StaticResource ControlButtons}">
+                <Button x:Name="FastForwardButton" Grid.Row="2" Grid.Column="4" PreviewMouseDown="FastForwardButton_Click" Style="{StaticResource ControlButtons}">
                     &#x23E9;
                     <Button.ToolTip>Fast Forward</Button.ToolTip>
                 </Button>

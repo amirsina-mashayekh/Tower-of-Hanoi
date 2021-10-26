@@ -90,26 +90,26 @@ namespace Extended_Hanoi.Pages
 
                 if (value == 0)
                 {
-                    FirstMoveButton.IsEnabled = false;
+                    FastReverseButton.IsEnabled = false;
                     PrevMoveButton.IsEnabled = false;
                     PlayPauseButton.IsEnabled = true;
-                    LastMoveButton.IsEnabled = true;
+                    FastForwardButton.IsEnabled = true;
                     NextMoveButton.IsEnabled = true;
                 }
                 else if (value == totalMoves)
                 {
-                    LastMoveButton.IsEnabled = false;
+                    FastForwardButton.IsEnabled = false;
                     NextMoveButton.IsEnabled = false;
                     PlayPauseButton.IsEnabled = false;
-                    FirstMoveButton.IsEnabled = true;
+                    FastReverseButton.IsEnabled = true;
                     PrevMoveButton.IsEnabled = true;
                 }
                 else
                 {
-                    FirstMoveButton.IsEnabled = true;
+                    FastReverseButton.IsEnabled = true;
                     PrevMoveButton.IsEnabled = true;
                     PlayPauseButton.IsEnabled = true;
-                    LastMoveButton.IsEnabled = true;
+                    FastForwardButton.IsEnabled = true;
                     NextMoveButton.IsEnabled = true;
                 }
             }
@@ -238,7 +238,7 @@ namespace Extended_Hanoi.Pages
                         CornerRadius = new CornerRadius(DisksHeight / 16),
                         Background = new SolidColorBrush(Color.FromArgb(127, 0, 0, 255)),
                         BorderBrush = new SolidColorBrush(Color.FromArgb(190, 0, 0, 255)),
-                        BorderThickness = new Thickness(0, 0.8, 0, 0),
+                        BorderThickness = new Thickness(1, 1, 1, 0.5),
                         SnapsToDevicePixels = true
                     }
                 };
@@ -269,16 +269,15 @@ namespace Extended_Hanoi.Pages
 
         private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
-            PlayPauseButton.Content = "\u23F8";
-            PlayPauseButton.ToolTip = "Pause";
+            ShowPauseButton();
 
             // If CancellationToken is true, it means play isn't running
             if (playCTS.IsCancellationRequested)
             {
-                FirstMoveButton.IsEnabled = false;
+                FastReverseButton.IsEnabled = false;
                 PrevMoveButton.IsEnabled = false;
                 NextMoveButton.IsEnabled = false;
-                LastMoveButton.IsEnabled = false;
+                FastForwardButton.IsEnabled = false;
 
                 playCTS = new CancellationTokenSource();
                 Task result = PlayAsync(playCTS.Token);
@@ -289,8 +288,7 @@ namespace Extended_Hanoi.Pages
                 catch (OperationCanceledException) { }
 
                 playCTS.Cancel();                       // To indicate play isn't running
-                PlayPauseButton.Content = "\u25B6";
-                PlayPauseButton.ToolTip = "Play";
+                ShowPlayButton();
                 MovesCursor = MovesCursor;              // Update buttons
                 ControlsGrid.IsEnabled = true;
             }
@@ -317,14 +315,20 @@ namespace Extended_Hanoi.Pages
             RemainingMoves = "";         // To update properties binded to it
         }
 
-        private async void LastMoveButton_Click(object sender, RoutedEventArgs e)
+        private async void FastForwardButton_Click(object sender, RoutedEventArgs e)
         {
-            ControlsGrid.IsEnabled = false;
-            ControlsGridGrid.Cursor = Cursors.Wait;
+            ShowPauseButton();
 
+            FastReverseButton.IsEnabled = false;
+            PrevMoveButton.IsEnabled = false;
+            PlayPauseButton.IsEnabled = true;
+            NextMoveButton.IsEnabled = false;
+            FastForwardButton.IsEnabled = false;
+
+            playCTS = new CancellationTokenSource();
             await Task.Run(async () =>
             {
-                while (MovesCursor < totalMoves)
+                while (_movesCursor < totalMoves && !playCTS.Token.IsCancellationRequested)
                 {
                     /* Used cursor as field instead of property to:
                      * -Prevent unnecessary buttons update
@@ -334,20 +338,26 @@ namespace Extended_Hanoi.Pages
                 }
             });
 
-            MovesCursor = MovesCursor;  // To update buttons status
-            ControlsGridGrid.Cursor = Cursors.Arrow;
-            ControlsGrid.IsEnabled = true;
             RedrawTower();
+            ShowPlayButton();
+            MovesCursor = MovesCursor;  // To update buttons status
+            ControlsGrid.IsEnabled = true;
         }
 
-        private async void FirstMoveButton_Click(object sender, RoutedEventArgs e)
+        private async void FastReverseButton_Click(object sender, RoutedEventArgs e)
         {
-            ControlsGrid.IsEnabled = false;
-            ControlsGridGrid.Cursor = Cursors.Wait;
+            ShowPauseButton();
 
+            FastReverseButton.IsEnabled = false;
+            PrevMoveButton.IsEnabled = false;
+            PlayPauseButton.IsEnabled = true;
+            NextMoveButton.IsEnabled = false;
+            FastForwardButton.IsEnabled = false;
+
+            playCTS = new CancellationTokenSource();
             await Task.Run(async () =>
             {
-                while (MovesCursor > 0)
+                while (_movesCursor > 0 && !playCTS.Token.IsCancellationRequested)
                 {
                     /* Used cursor as field instead of property to:
                      * -Prevent unnecessary buttons update
@@ -357,10 +367,28 @@ namespace Extended_Hanoi.Pages
                 }
             });
 
-            MovesCursor = MovesCursor;  // To update buttons status
-            ControlsGridGrid.Cursor = Cursors.Arrow;
-            ControlsGrid.IsEnabled = true;
             RedrawTower();
+            ShowPlayButton();
+            MovesCursor = MovesCursor;  // To update buttons status
+            ControlsGrid.IsEnabled = true;
+        }
+
+        /// <summary>
+        /// Changes PlayPauseButton to Play mode
+        /// </summary>
+        private void ShowPlayButton()
+        {
+            PlayPauseButton.Content = "\u25B6";
+            PlayPauseButton.ToolTip = "Play";
+        }
+
+        /// <summary>
+        /// Changes PlayPauseButton to Pause mode
+        /// </summary>
+        private void ShowPauseButton()
+        {
+            PlayPauseButton.Content = "\u23F8";
+            PlayPauseButton.ToolTip = "Pause";
         }
 
         /// <summary>
