@@ -23,6 +23,7 @@
 
         <Button x:Name="BackToStartPageButton" Style="{StaticResource ControlButtons}" FontSize="22" HorizontalAlignment="Left" Click="BackToStartPageButton_Click">
             &#x2B05;
+            <Button.ToolTip>Back to Start Page</Button.ToolTip>
         </Button>
 
         <TextBlock HorizontalAlignment="Center"  FontSize="18" VerticalAlignment="Bottom">
@@ -62,19 +63,24 @@
                     Minimum="1" Maximum="100" SmallChange="1" LargeChange="10" Value="25" ValueChanged="SpeedSlider_ValueChanged" />
 
                 <Button x:Name="FirstMoveButton" Grid.Row="2" Grid.Column="0" Click="FirstMoveButton_Click" Style="{StaticResource ControlButtons}">
-                    &#x23EE;
+                    &#x23EA;
+                    <Button.ToolTip>Fast Reverse</Button.ToolTip>
                 </Button>
                 <Button x:Name="PrevMoveButton" Grid.Row="2" Grid.Column="1" Click="PrevMoveButton_Click" Style="{StaticResource ControlButtons}">
-                    &#x23EA;
+                    &#x2B05;
+                    <Button.ToolTip>Previous Move</Button.ToolTip>
                 </Button>
                 <Button x:Name="PlayPauseButton" Grid.Row="2" Grid.Column="2" Click="PlayPauseButton_Click" Style="{StaticResource ControlButtons}">
                     &#x25B6;
+                    <Button.ToolTip>Play</Button.ToolTip>
                 </Button>
                 <Button x:Name="NextMoveButton" Grid.Row="2" Grid.Column="3" Click="NextMoveButton_Click" Style="{StaticResource ControlButtons}">
-                    &#x23E9;
+                    &#x27A1;
+                    <Button.ToolTip>Next Move</Button.ToolTip>
                 </Button>
                 <Button x:Name="LastMoveButton" Grid.Row="2" Grid.Column="4" Click="LastMoveButton_Click" Style="{StaticResource ControlButtons}">
-                    &#x23ED;
+                    &#x23E9;
+                    <Button.ToolTip>Fast Forward</Button.ToolTip>
                 </Button>
             </Grid>
         </Grid>

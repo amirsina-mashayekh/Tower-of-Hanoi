@@ -62,6 +62,8 @@
     <Style x:Key="ControlButtons" TargetType="{x:Type Button}">
         <Setter Property="FontSize" Value="28" />
         <Setter Property="FontFamily" Value="Segoe UI Emoji" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Effect">
             <Setter.Value>
                 <DropShadowEffect ShadowDepth="4" Direction="330" Color="Black" Opacity="0.5" BlurRadius="4" />

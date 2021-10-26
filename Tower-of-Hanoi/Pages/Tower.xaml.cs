@@ -270,6 +270,7 @@ namespace Extended_Hanoi.Pages
         private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
             PlayPauseButton.Content = "\u23F8";
+            PlayPauseButton.ToolTip = "Pause";
 
             // If CancellationToken is true, it means play isn't running
             if (playCTS.IsCancellationRequested)
@@ -289,6 +290,7 @@ namespace Extended_Hanoi.Pages
 
                 playCTS.Cancel();                       // To indicate play isn't running
                 PlayPauseButton.Content = "\u25B6";
+                PlayPauseButton.ToolTip = "Play";
                 MovesCursor = MovesCursor;              // Update buttons
                 ControlsGrid.IsEnabled = true;
             }
