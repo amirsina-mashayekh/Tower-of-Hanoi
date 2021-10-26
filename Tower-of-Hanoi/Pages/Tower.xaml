@@ -31,12 +31,7 @@
             Remaining
         </TextBlock>
 
-        <Canvas x:Name="TowerCanvas" Grid.Row="1" Width="750" Height="325">
-            <Border x:Name="Peg1" Width="20" Height="260" Canvas.Left="145" Canvas.Bottom="0" Background="#966F33" CornerRadius="5" />
-            <Border x:Name="Peg2" Width="20" Height="260" Canvas.Left="365" Canvas.Bottom="0" Background="#966F33" CornerRadius="5" />
-            <Border x:Name="Peg3" Width="20" Height="260" Canvas.Left="585" Canvas.Bottom="0" Background="#966F33" CornerRadius="5" />
-            <Border x:Name="Floor" Width="660" Height="25" Canvas.Left="45" Canvas.Bottom="0" Background="#966F33" CornerRadius="5" BorderBrush="Brown" BorderThickness="0,1,0,0" />
-        </Canvas>
+        <Canvas x:Name="TowerCanvas" Grid.Row="1" Width="750" Height="325" />
 
         <!--Outer grid is for cursor, inner grid is to enable and disable controls.-->
         <Grid x:Name="ControlsGridGrid" Grid.Row="2" Margin="100,0">

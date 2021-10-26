@@ -96,6 +96,7 @@
     <Compile Include="Pages\Tower.xaml.cs">
       <DependentUpon>Tower.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\TowerFields.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
