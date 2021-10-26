@@ -1,2 +1,2 @@
 # Extended-Hanoi
-A GUI representation of Extended Hanoi algorithm
+A GUI representation for Hanoi and Extended Hanoi algorithms
