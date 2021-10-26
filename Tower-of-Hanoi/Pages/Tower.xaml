@@ -30,8 +30,9 @@
             <Run Text="{Binding RemainingMoves}" />
             Remaining
         </TextBlock>
-
-        <Canvas x:Name="TowerCanvas" Grid.Row="1" Width="750" Height="325" />
+        <Viewbox Grid.Row="1">
+            <Canvas x:Name="TowerCanvas" Width="800" Height="325" />
+        </Viewbox>
 
         <!--Outer grid is for cursor, inner grid is to enable and disable controls.-->
         <Grid x:Name="ControlsGridGrid" Grid.Row="2" Margin="100,0">

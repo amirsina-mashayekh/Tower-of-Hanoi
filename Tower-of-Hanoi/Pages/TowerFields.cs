@@ -18,6 +18,11 @@ namespace Extended_Hanoi.Pages
         private const double MaxDiskHeight = 50;
 
         /// <summary>
+        /// Current height of disks.
+        /// </summary>
+        private double DisksHeight;
+
+        /// <summary>
         /// Width of Pegs.
         /// </summary>
         private const double PegsWidth = 20;
@@ -53,10 +58,8 @@ namespace Extended_Hanoi.Pages
         private static readonly SolidColorBrush FloorBorderBrush = Brushes.Brown;
 
         /// <summary>
-        /// Current height of disks.
+        /// Direction of light source for shadows and gradients.
         /// </summary>
-        private double DisksHeight;
-
         public static double LightDirection => 330;
 
         /// <summary>
@@ -180,7 +183,7 @@ namespace Extended_Hanoi.Pages
         /// <summary>
         /// Array of pegs.
         /// </summary>
-        private readonly List<Border>[] Pegs = new List<Border>[3];
+        private readonly List<Border>[] Pegs;
 
         /// <summary>
         /// Cancellation Token Source for play/pause.
