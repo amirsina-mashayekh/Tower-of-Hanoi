@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -53,7 +54,7 @@ namespace Tower_of_Hanoi.Pages
                         );
                 }
 
-                Tower.Moves = moves;
+                Tower.Moves = new ReadOnlyCollection<Move>(moves);
                 _ = NavigationService.Navigate(new Uri("/Pages/Tower.xaml", UriKind.Relative));
             }
             catch (Exception ex)

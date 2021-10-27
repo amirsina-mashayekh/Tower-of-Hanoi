@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -103,7 +104,7 @@ namespace Tower_of_Hanoi.Pages
         /// <summary>
         /// A list which contains disk moves.
         /// </summary>
-        public static List<Move> Moves { get; set; }
+        public static ReadOnlyCollection<Move> Moves { get; set; }
 
         /// <summary>
         /// Total moves count.
