@@ -207,6 +207,7 @@ namespace Tower_of_Hanoi.Pages
                     await PerformMoveAsync(Moves[_movesCursor++], false);
                 }
             });
+            PlayCTS.Cancel();                       // To indicate play isn't running
 
             RedrawTower();
             ShowPlayButton();
@@ -236,6 +237,7 @@ namespace Tower_of_Hanoi.Pages
                     await PerformMoveAsync(Move.Reverse(Moves[--_movesCursor]), false);
                 }
             });
+            PlayCTS.Cancel();                       // To indicate play isn't running
 
             RedrawTower();
             ShowPlayButton();
