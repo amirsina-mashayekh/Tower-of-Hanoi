@@ -1,8 +1,8 @@
-﻿using Tower_of_Hanoi.Pages;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using Tower_of_Hanoi.Pages;
 
 namespace Tower_of_Hanoi
 {

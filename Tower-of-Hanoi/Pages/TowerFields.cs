@@ -1,5 +1,4 @@
-﻿using Tower_of_Hanoi.HanoiUtil;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -7,6 +6,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Tower_of_Hanoi.HanoiUtil;
 
 namespace Tower_of_Hanoi.Pages
 {
