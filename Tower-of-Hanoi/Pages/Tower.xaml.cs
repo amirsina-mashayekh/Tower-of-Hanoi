@@ -311,18 +311,25 @@ namespace Tower_of_Hanoi.Pages
         }
 
         /// <summary>
-        /// Performs a method animatedly.
+        /// Changes a double-typed property of an element animatedly.
         /// </summary>
-        /// <param name="start">The initial value.</param>
-        /// <param name="end">The final value.</param>
-        /// <param name="method">The method to perform.</param>
+        /// <param name="end">The final value of property.</param>
+        /// <param name="element">The element which should be animated.</param>
+        /// <param name="property">The property which should be animated. Must use double value.</param>
         /// <param name="time">The time animation should take in milliseconds.</param>
         /// <returns>A <c>Task</c> object.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">When <c>time</c> is less than or equal to 0.</exception>
+        /// <exception cref="ArgumentException">When <c>property.PropertyType</c> isn't double.</exception>
         private async Task AnimateAsync(double end, UIElement element, DependencyProperty property, TimeSpan time)
         {
             if (time.Ticks <= 0)
             {
                 throw new ArgumentOutOfRangeException();
+            }
+
+            if (property.PropertyType.FullName != "System.Double")
+            {
+                throw new ArgumentException();
             }
 
             TaskCompletionSource<bool> acs = new TaskCompletionSource<bool>();
