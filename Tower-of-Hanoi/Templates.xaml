@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:Pages ="clr-namespace:Tower_of_Hanoi.Pages">
     <Style x:Key="FocusVisual">
         <Setter Property="Control.Template">
             <Setter.Value>
@@ -65,7 +66,7 @@
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="Effect">
             <Setter.Value>
-                <DropShadowEffect ShadowDepth="4" Direction="{Binding LightDirection}" Color="Black" Opacity="0.5" BlurRadius="4" />
+                <DropShadowEffect ShadowDepth="4" Direction="{x:Static Pages:Tower.LightDirection}" Color="Black" Opacity="0.5" BlurRadius="4" />
             </Setter.Value>
         </Setter>
         <Setter Property="Template">

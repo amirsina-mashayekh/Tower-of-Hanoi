@@ -34,51 +34,48 @@
             <Canvas x:Name="TowerCanvas" Width="800" Height="325" />
         </Viewbox>
 
-        <!--Outer grid is for cursor, inner grid is to enable and disable controls.-->
-        <Grid x:Name="ControlsGridGrid" Grid.Row="2" Margin="100,0">
-            <Grid x:Name="ControlsGrid">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
+        <Grid x:Name="ControlsGrid" Grid.Row="2" Margin="100,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
 
-                <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Center" FontSize="18">
-                    <TextBlock>
+            <Label Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Center" FontSize="18">
+                <TextBlock>
                         &#x23F1;Speed: <Run Text="{Binding AnimationSpeed, Mode=OneWay}" />%
-                    </TextBlock>
-                </Label>
-                <Slider x:Name="SpeedSlider" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" ToolTip="Speed"
+                </TextBlock>
+            </Label>
+            <Slider x:Name="SpeedSlider" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" ToolTip="Speed"
                     Minimum="1" Maximum="100" SmallChange="1" LargeChange="10" Value="25" ValueChanged="SpeedSlider_ValueChanged" />
 
-                <Button x:Name="FastReverseButton" Grid.Row="2" Grid.Column="0" Click="FastReverseButton_Click" Style="{StaticResource ControlButtons}">
-                    &#x23EA;
-                    <Button.ToolTip>Fast Reverse</Button.ToolTip>
-                </Button>
-                <Button x:Name="PrevMoveButton" Grid.Row="2" Grid.Column="1" Click="PrevMoveButton_Click" Style="{StaticResource ControlButtons}">
-                    &#x2B05;
-                    <Button.ToolTip>Previous Move</Button.ToolTip>
-                </Button>
-                <Button x:Name="PlayPauseButton" Grid.Row="2" Grid.Column="2" Click="PlayPauseButton_Click" Style="{StaticResource ControlButtons}">
-                    &#x25B6;
-                    <Button.ToolTip>Play</Button.ToolTip>
-                </Button>
-                <Button x:Name="NextMoveButton" Grid.Row="2" Grid.Column="3" Click="NextMoveButton_Click" Style="{StaticResource ControlButtons}">
-                    &#x27A1;
-                    <Button.ToolTip>Next Move</Button.ToolTip>
-                </Button>
-                <Button x:Name="FastForwardButton" Grid.Row="2" Grid.Column="4" PreviewMouseDown="FastForwardButton_Click" Style="{StaticResource ControlButtons}">
-                    &#x23E9;
-                    <Button.ToolTip>Fast Forward</Button.ToolTip>
-                </Button>
-            </Grid>
+            <Button x:Name="FastReverseButton" Grid.Row="2" Grid.Column="0" Click="FastReverseButton_Click" Style="{StaticResource ControlButtons}">
+                &#x23EA;
+                <Button.ToolTip>Fast Reverse</Button.ToolTip>
+            </Button>
+            <Button x:Name="PrevMoveButton" Grid.Row="2" Grid.Column="1" Click="PrevMoveButton_Click" Style="{StaticResource ControlButtons}">
+                &#x2B05;
+                <Button.ToolTip>Previous Move</Button.ToolTip>
+            </Button>
+            <Button x:Name="PlayPauseButton" Grid.Row="2" Grid.Column="2" Click="PlayPauseButton_Click" Style="{StaticResource ControlButtons}">
+                &#x25B6;
+                <Button.ToolTip>Play</Button.ToolTip>
+            </Button>
+            <Button x:Name="NextMoveButton" Grid.Row="2" Grid.Column="3" Click="NextMoveButton_Click" Style="{StaticResource ControlButtons}">
+                &#x27A1;
+                <Button.ToolTip>Next Move</Button.ToolTip>
+            </Button>
+            <Button x:Name="FastForwardButton" Grid.Row="2" Grid.Column="4" PreviewMouseDown="FastForwardButton_Click" Style="{StaticResource ControlButtons}">
+                &#x23E9;
+                <Button.ToolTip>Fast Forward</Button.ToolTip>
+            </Button>
         </Grid>
     </Grid>
 </Page>
